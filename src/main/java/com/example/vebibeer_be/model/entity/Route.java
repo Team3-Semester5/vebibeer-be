@@ -1,7 +1,8 @@
 package com.example.vebibeer_be.model.entity;
 
 import java.sql.Date;
-import java.util.ArrayList;
+
+import java.util.Set;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -49,7 +50,7 @@ public class Route {
 
     @ManyToMany
     @JoinTable(name = "Route_car", joinColumns = @JoinColumn(name = "route_id"), inverseJoinColumns = @JoinColumn(name = "car_id"))
-    private ArrayList<Car> car;
+    private Set<Car> car;
 
     @OneToOne
     @JoinColumn(name = "driver_id", referencedColumnName = "driver_id")
