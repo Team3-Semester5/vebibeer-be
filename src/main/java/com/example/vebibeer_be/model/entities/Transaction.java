@@ -1,7 +1,7 @@
 package com.example.vebibeer_be.model.entities;
 
 import java.sql.Date;
-import java.util.ArrayList;
+import java.util.Set;
 
 import com.example.vebibeer_be.model.entities.BusCompany.Ticket;
 import com.example.vebibeer_be.model.entities.Customer.Customer;
@@ -41,8 +41,8 @@ public class Transaction {
     private Date transaction_timeEdit;
 
     @ManyToMany
-    @JoinTable(name = "ticket_transaction", joinColumns = @JoinColumn(name = "ticket_id"), inverseJoinColumns = @JoinColumn(name = "transaction_id"))
-    private ArrayList<Ticket> tickets;
+    @JoinTable(name = "ticket_transaction", joinColumns = @JoinColumn(name = "transaction_id"), inverseJoinColumns = @JoinColumn(name = "ticket_id"))
+    private Set<Ticket> tickets;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "customer_id", referencedColumnName = "customer_id")
