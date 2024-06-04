@@ -1,5 +1,6 @@
 package com.example.vebibeer_be.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,20 @@ public class RestTicketController {
         }
         return new ResponseEntity<List<Ticket>>(Tickets, HttpStatus.OK);
     }
+
+    @GetMapping(value = {"/{idRoute}", "/{idRoute}/"})
+    public ResponseEntity<List<Ticket>> showListByRoute(@PathVariable(name = "idRoute") int idRoute) {
+        List<Ticket> Tickets = new ArrayList<>();
+        for (Ticket ticket : ticketService.getAll()) {
+            if (ticket.getRoute().getRoute_id() == idRoute) {
+                Tickets.add(ticket);
+            }
+        }
+        if (Tickets.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<List<Ticket>>(Tickets, HttpStatus.OK);
+    }
     
     @PostMapping(value = {"/save", "/save/"})
     public ResponseEntity<Ticket> save(@RequestBody Ticket newTicket) {
@@ -45,14 +60,14 @@ public class RestTicketController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
     
-    @GetMapping(value = {"/{id}", "/{id}/"})
-    public ResponseEntity<Ticket> getById(@PathVariable(name = "id")int Ticket_id) {
-        Ticket Ticket = ticketService.getById(Ticket_id);
-        if (Ticket == null) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
-        return new ResponseEntity<Ticket>(Ticket, HttpStatus.OK);
-    }
+    // @GetMapping(value = {"/{id}", "/{id}/"})
+    // public ResponseEntity<Ticket> getById(@PathVariable(name = "id")int Ticket_id) {
+    //     Ticket Ticket = ticketService.getById(Ticket_id);
+    //     if (Ticket == null) {
+    //         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    //     }
+    //     return new ResponseEntity<Ticket>(Ticket, HttpStatus.OK);
+    // }
 
     @DeleteMapping(value = {"/delete/{id}", "/delete/{id}/"})
     public ResponseEntity<Ticket> delete(@PathVariable(name = "id") int Ticket_id){
