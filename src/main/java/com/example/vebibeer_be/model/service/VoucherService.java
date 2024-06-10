@@ -1,55 +1,32 @@
-package com.example.model.service;
-
+package com.example.vebibeer_be.model.service;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-import com.example.model.entity.Voucher;
-import com.example.model.repo.VoucherRepository;
+import com.example.vebibeer_be.model.entities.Voucher;
+import com.example.vebibeer_be.model.repo.VoucherRepo;
 
-
-
-
+@Service
 public class VoucherService {
-    
     @Autowired
-    private VoucherRepository voucherRepository;
+    VoucherRepo voucherRepo;
 
-
-     public Voucher createVoucher(Voucher voucher) {
-        return voucherRepository.save(voucher);
+    public List<Voucher> getAll(){
+        return voucherRepo.findAll();
     }
 
-    
-    public List<Voucher> getAllVouchers() {
-        return voucherRepository.findAll();
+    public Voucher getById(String voucher_code){
+        return voucherRepo.getReferenceById(voucher_code);
     }
 
-    public Optional<Voucher> getVoucherById(int id) {
-        return voucherRepository.findById(id);
+    public void save(Voucher voucher){
+        voucherRepo.save(voucher);
     }
 
-   
-   
-public Voucher updateVoucher(int id, Voucher voucherDetails) {
-    Optional<Voucher> optionalVoucher = voucherRepository.findById(id);
-    if (optionalVoucher.isPresent()) {
-        Voucher existingVoucher = optionalVoucher.get();
-        existingVoucher.setVoucher_code(voucherDetails.getVoucher_code());
-        existingVoucher.setVoucher_sale(voucherDetails.getVoucher_sale());
-        existingVoucher.setStart_time(voucherDetails.getStart_time());
-        existingVoucher.setEnd_time(voucherDetails.getEnd_time());
-        existingVoucher.setVoucher_condition(voucherDetails.getVoucher_condition());
-        return voucherRepository.save(existingVoucher);
-    } else {
-        throw new RuntimeException("Voucher not found with id " + id);
+    public void delete(String voucher_code){
+        voucherRepo.deleteById(voucher_code);
     }
-}
 
- 
-    public void deleteVoucher(int id) {
-        voucherRepository.deleteById(id);
-    }
 }

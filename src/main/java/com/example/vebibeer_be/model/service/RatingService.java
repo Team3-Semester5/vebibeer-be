@@ -1,53 +1,32 @@
-package com.example.model.service;
+package com.example.vebibeer_be.model.service;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.example.model.entity.Rating;
-import com.example.model.repo.RatingRepository;
+import com.example.vebibeer_be.model.entities.Rating;
+import com.example.vebibeer_be.model.repo.RatingRepo;
 
 @Service
 public class RatingService {
-    
     @Autowired
-    private RatingRepository ratingRepository;
+    RatingRepo ratingRepo;
 
-    // Create a new rating
-    public Rating createRating(Rating rating) {
-        return ratingRepository.save(rating);
+    public List<Rating> getAll(){
+        return ratingRepo.findAll();
     }
 
-    // Retrieve all ratings
-    public List<Rating> getAllRatings() {
-        return ratingRepository.findAll();
+    public Rating getById(int rating_id){
+        return ratingRepo.getReferenceById(rating_id);
     }
 
-    // Retrieve a rating by its ID
-    public Optional<Rating> getRatingById(int id) {
-        return ratingRepository.findById(id);
+    public void save(Rating rating){
+        ratingRepo.save(rating);
     }
 
-    // Update a rating
-    public Rating updateRating(int id, Rating ratingDetails) {
-        Optional<Rating> optionalRating = ratingRepository.findById(id);
-        if (optionalRating.isPresent()) {
-            Rating existingRating = optionalRating.get();
-            existingRating.setAmount_star(ratingDetails.getAmount_star());
-            existingRating.setContent(ratingDetails.getContent());
-            existingRating.setTime_to_edit(ratingDetails.getTime_to_edit());
-            existingRating.setBusCompany(ratingDetails.getBusCompany());
-            existingRating.setCustomer(ratingDetails.getCustomer());
-            return ratingRepository.save(existingRating);
-        } else {
-            throw new RuntimeException("Rating not found with id " + id);
-        }
+    public void delete(int rating_id){
+        ratingRepo.deleteById(rating_id);
     }
 
-    // Delete a rating by its ID
-    public void deleteRating(int id) {
-        ratingRepository.deleteById(id);
-    }
 }

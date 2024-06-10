@@ -1,59 +1,32 @@
-
-package com.example.model.service;
+package com.example.vebibeer_be.model.service;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.example.model.entity.Transaction;
-import com.example.model.repo.TransactionRepository;
-
+import com.example.vebibeer_be.model.entities.Transaction;
+import com.example.vebibeer_be.model.repo.TransactionRepo;
 
 @Service
 public class TransactionService {
     @Autowired
-    TransactionRepository transactionRepository;
+    TransactionRepo transactionRepo;
 
-
-    // create the transaction
-    public Transaction createTransaction(Transaction transaction){
-        return transactionRepository.save(transaction);
+    public List<Transaction> getAll(){
+        return transactionRepo.findAll();
     }
 
-    // retrive the trasaction
-    public List<Transaction> getAllTransactions(){
-        return transactionRepository.findAll();
+    public Transaction getById(int transaction_id){
+        return transactionRepo.getReferenceById(transaction_id);
     }
 
-    // retrive the transaction by id
-    public Optional<Transaction> getTransactionById(int id){
-        return transactionRepository.findById(id);
+    public void save(Transaction transaction){
+        transactionRepo.save(transaction);
     }
 
-
-    // update the transaction
-    public Transaction updateTransaction(int id, Transaction transaction){
-        Optional<Transaction> optionalTransaction = transactionRepository.findById(id);
-        if(optionalTransaction.isPresent()){
-            Transaction existTransaction = optionalTransaction.get();
-            existTransaction.setCustomer(transaction.getCustomer());
-            existTransaction.setPaymentMethod(transaction.getPaymentMethod());
-            existTransaction.setTicket(transaction.getTicket());
-            existTransaction.setTransaction_point(transaction.getTransaction_point());
-            existTransaction.setTransaction_status(transaction.getTransaction_status());
-            existTransaction.setTransaction_time_to_edit(transaction.getTransaction_time_to_edit());
-            existTransaction.setTransaction_VAT(transaction.getTransaction_VAT());
-            existTransaction.setVoucher(transaction.getVoucher());
-            return existTransaction;
-        }else {
-            throw new RuntimeException( "Transaction was not found with id"+ id);
-        }
+    public void delete(int transaction_id){
+        transactionRepo.deleteById(transaction_id);
     }
 
-    // delete the tracsaction by id
-    public void deleteTransaction(int id){
-        transactionRepository.deleteById(id);
-    }
 }
