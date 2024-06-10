@@ -4,7 +4,6 @@ import java.sql.Date;
 
 import com.example.vebibeer_be.model.entities.BusCompany.BusCompany;
 import com.example.vebibeer_be.model.entities.Customer.Customer;
-import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;

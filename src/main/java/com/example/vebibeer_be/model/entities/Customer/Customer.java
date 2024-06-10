@@ -7,6 +7,7 @@ import com.example.vebibeer_be.model.entities.Transaction;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -48,7 +49,7 @@ public class Customer {
     @JoinColumn(name = "typeCustomer_Id", referencedColumnName = "typeCustomer_id")
     private TypeCustomer typeCustomer;
 
-    @OneToMany(mappedBy = "customer")
+    @OneToMany(mappedBy = "customer", fetch = FetchType.EAGER)
     @JsonBackReference
     private Set<Transaction> transactions;
 

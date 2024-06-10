@@ -25,4 +25,5 @@ public class PaymentMethod {
 
     private String paymentMethod_name;
     private String paymentMethod_description;
+    private String paymentMethod_ava;
 }
