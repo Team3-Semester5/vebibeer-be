@@ -1,6 +1,7 @@
 package com.example.vebibeer_be.model.service.BusCompanyService;
 
 import java.util.List;
+import java.util.OptionalDouble;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,6 +30,13 @@ public class TicketService {
     public void delete(int ticket_id) {
         ticketRepo.deleteById(ticket_id);
         ;
+    }
+    public double getAverageTicketPrice() {
+        List<Ticket> tickets = getAll();
+        OptionalDouble average = tickets.stream()
+                                        .mapToDouble(Ticket::getTicket_price)
+                                        .average();
+        return average.isPresent() ? average.getAsDouble() : 0.0;
     }
 
 }

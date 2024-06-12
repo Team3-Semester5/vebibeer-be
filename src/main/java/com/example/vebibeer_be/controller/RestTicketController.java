@@ -61,14 +61,7 @@ public class RestTicketController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
     
-    // @GetMapping(value = {"/{id}", "/{id}/"})
-    // public ResponseEntity<Ticket> getById(@PathVariable(name = "id")int Ticket_id) {
-    //     Ticket Ticket = ticketService.getById(Ticket_id);
-    //     if (Ticket == null) {
-    //         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    //     }
-    //     return new ResponseEntity<Ticket>(Ticket, HttpStatus.OK);
-    // }
+
 
     @DeleteMapping(value = {"/delete/{id}", "/delete/{id}/"})
     public ResponseEntity<Ticket> delete(@PathVariable(name = "id") int Ticket_id){
@@ -79,4 +72,11 @@ public class RestTicketController {
         ticketService.delete(Ticket_id);
         return new ResponseEntity<Ticket>(Ticket, HttpStatus.OK);
     }
+
+    @GetMapping("/average-price")
+    public ResponseEntity<Double> getAverageTicketPrice() {
+        double averagePrice = ticketService.getAverageTicketPrice();
+        return new ResponseEntity<>(averagePrice, HttpStatus.OK);
+    }
+
 }

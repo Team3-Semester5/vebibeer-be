@@ -31,7 +31,7 @@ public class RestCartController {
     }
 
     @GetMapping(value = { "", "/" })
-    public ResponseEntity<List<TicketDTO>> getCart(HttpSession session) {
+    public ResponseEntity<List<TicketDTO>> getCart(HttpSession session) {   
         List<Ticket> cart = (List<Ticket>) session.getAttribute("cart");
         if (cart == null) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
