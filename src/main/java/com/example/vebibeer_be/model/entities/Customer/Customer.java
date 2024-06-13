@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.util.Set;
 import com.example.vebibeer_be.model.entities.Role;
 import com.example.vebibeer_be.model.entities.Transaction;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @Getter
 @Setter
 @AllArgsConstructor
@@ -13,6 +14,7 @@ import com.example.vebibeer_be.model.entities.Transaction;
 @ToString
 @Entity
 @Table(name = "customer")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Customer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -38,6 +38,8 @@ dependencies {
 	
 	implementation("org.hibernate.orm:hibernate-core:6.4.4.Final")
 	 implementation group: 'com.google.firebase', name: 'firebase-admin', version: '8.1.0'
+	 // Jackson Datatype Hibernate
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-hibernate5:2.15.4'
 }
 
 tasks.named('test') {

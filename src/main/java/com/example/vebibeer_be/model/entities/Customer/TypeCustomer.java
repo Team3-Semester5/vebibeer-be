@@ -3,6 +3,7 @@ package com.example.vebibeer_be.model.entities.Customer;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -23,6 +24,7 @@ import lombok.ToString;
 @ToString
 @Entity
 @Table(name = "typeCustomer")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class TypeCustomer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
