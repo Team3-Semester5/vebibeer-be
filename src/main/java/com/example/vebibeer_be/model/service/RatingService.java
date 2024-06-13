@@ -1,6 +1,7 @@
 package com.example.vebibeer_be.model.service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,4 +30,9 @@ public class RatingService {
         ratingRepo.deleteById(rating_id);
     }
 
+    public List<Rating> getAllSortedByStars() {
+        return ratingRepo.findAll().stream()
+                .sorted((r1, r2) -> Integer.compare(r2.getAmount_star(), r1.getAmount_star()))
+                .collect(Collectors.toList());
+    }
 }

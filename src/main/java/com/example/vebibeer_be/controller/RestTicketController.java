@@ -73,10 +73,16 @@ public class RestTicketController {
         return new ResponseEntity<Ticket>(Ticket, HttpStatus.OK);
     }
 
-    @GetMapping("/average-price")
-    public ResponseEntity<Double> getAverageTicketPrice() {
-        double averagePrice = ticketService.getAverageTicketPrice();
-        return new ResponseEntity<>(averagePrice, HttpStatus.OK);
+    @GetMapping("/lowest-price")
+    public ResponseEntity<Double> getLowestTicketPrice() {
+        double lowestPrice = ticketService.getLowestTicketPrice();
+        return new ResponseEntity<>(lowestPrice, HttpStatus.OK);
+    }
+
+    @GetMapping("/highest-price")
+    public ResponseEntity<Double> getHighestTicketPrice() {
+        double highestPrice = ticketService.getHighestTicketPrice();
+        return new ResponseEntity<>(highestPrice, HttpStatus.OK);
     }
 
 }

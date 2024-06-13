@@ -70,4 +70,13 @@ public class RestRatingController {
         return new ResponseEntity<Rating>(Rating, HttpStatus.OK);
     }
 
+    @GetMapping(value = { "/sorted", "/sorted/" })
+    public ResponseEntity<List<Rating>> getSortedRatings() {
+        List<Rating> sortedRatings = ratingService.getAllSortedByStars();
+        if (sortedRatings.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<List<Rating>>(sortedRatings, HttpStatus.OK);
+    }
+
 }
