@@ -21,6 +21,7 @@ import lombok.ToString;
 public class Voucher {
     @Id
     private String voucher_code;
+
     private double saleUp;
     private Date startTime;
     private Date endTime;

@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -33,7 +34,7 @@ public class TypeCustomer {
     private String typeCustomer_name;
     private String typeCustomer_description;
 
-    @OneToMany(mappedBy = "typeCustomer")
+    @OneToMany(mappedBy = "typeCustomer", fetch = FetchType.EAGER)
     @JsonBackReference
     private Set<Customer> customers;
 }

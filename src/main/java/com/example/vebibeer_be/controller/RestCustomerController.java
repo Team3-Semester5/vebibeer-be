@@ -1,29 +1,27 @@
 package com.example.vebibeer_be.controller;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.example.vebibeer_be.model.entities.Customer.Customer;
 import com.example.vebibeer_be.model.service.CustomerService.CustomerService;
-
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
-
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import com.example.vebibeer_be.model.service.CloudinaryService;
 
 @RestController
 @RequestMapping(value = "/customer")
 public class RestCustomerController {
+
     @Autowired
-    CustomerService customerService = new CustomerService();
+    CustomerService customerService;
+
+    @Autowired
+    CloudinaryService cloudinaryService;
 
     @GetMapping(value = {"", "/"})
     public ResponseEntity<List<Customer>> showList() {
@@ -34,24 +32,15 @@ public class RestCustomerController {
         return new ResponseEntity<List<Customer>>(customerList, HttpStatus.OK);
     }
 
-    @GetMapping(value = {"/{id}", "/{id}/"})
-    public ResponseEntity<Customer> showDetailCustomer(HttpServletRequest request, @PathVariable(name = "id") int customer_id) {
-        HttpSession session = request.getSession();
-        Customer currentUser = new Customer();
-        try {
-            currentUser = (Customer) session.getAttribute("currentUser");
-        } catch (Exception e) {
-            System.out.println(e);
+    @GetMapping("/{id}")
+    public ResponseEntity<Customer> showDetailCustomer(@PathVariable("id") int customerId) {
+        Customer customer = customerService.getCustomerById(customerId);
+        if (customer == null) {
+            return ResponseEntity.notFound().build();
         }
-        if (customerService.getCustomerById(customer_id) == null) {
-            return new ResponseEntity<Customer>(currentUser, HttpStatus.NOT_FOUND);
-        }
-        if (currentUser.getCustomer_id() == customer_id) {
-            return new ResponseEntity<Customer>(currentUser, HttpStatus.OK);
-        }
-        return new ResponseEntity<Customer>(currentUser, HttpStatus.FOUND);
+        return ResponseEntity.ok(customer);
     }
-    
+
     @GetMapping(value = {"/delete/{id}/", "/delete/{id}"})
     public ResponseEntity<Customer> deleteCustomer(@PathVariable(name = "id") int customer_id) {
         Customer customer = customerService.getCustomerById(customer_id);
@@ -61,13 +50,35 @@ public class RestCustomerController {
         customerService.deleteCustomer(customer_id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
-    
+
     @PostMapping(value = {"/save", "/save/"})
-    public ResponseEntity<Customer> postMethodName(@RequestBody Customer customer) {
-        System.out.println(customer.toString());
+    public ResponseEntity<Customer> saveCustomer(@RequestBody Customer customer) {
         customerService.saveCustomer(customer);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
-    
 
+    @PostMapping("/upload/{id}")
+    public ResponseEntity<Customer> uploadCustomerImage(
+            @PathVariable("id") int customerId,
+            @RequestParam("file") MultipartFile file) {
+        try {
+            Customer customer = customerService.getCustomerById(customerId);
+            if (customer == null) {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+
+            // Upload ảnh lên Cloudinary
+            String imageUrl = cloudinaryService.uploadFile(file);
+
+            // Cập nhật đường dẫn ảnh vào đối tượng Customer
+            customer.setCustomer_img_ava(imageUrl);
+
+            // Lưu thông tin khách hàng vào cơ sở dữ liệu
+            customerService.saveCustomer(customer);
+
+            return new ResponseEntity<>(customer, HttpStatus.OK);
+        } catch (IOException e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }

@@ -27,7 +27,6 @@ public class CustomerService {
     }
 
     public void saveCustomer(Customer customer){
-        customer.setTypeCustomer(typeCustomerRepo.getReferenceById(customer.getTypeCustomer().getTypeCustomer_id()));
         customerRepo.save(customer);
     }
 

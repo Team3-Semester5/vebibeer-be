@@ -1,71 +1,58 @@
 package com.example.vebibeer_be.model.entities.Customer;
-import lombok.*;
-import jakarta.persistence.*;
+
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Set;
-import com.example.vebibeer_be.model.entities.Role;
+
 import com.example.vebibeer_be.model.entities.Transaction;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
 @Entity
-@Table(name = "customer")
+@Table(name = "Customer")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Customer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int customer_id;
 
-    @Column(nullable = false, unique = true)
     private String username;
-
-    @Column(nullable = false)
     private String password;
-
-    
     private String customer_status;
-
-    
     private String customer_fullname;
-
-    
     private LocalDate customer_dob;
-
-    
     private String customer_img_ava;
-
-    private String customer_description;
-
-    
     private String customer_nationality;
-
     private String customer_gender;
-
+    private String customer_description;
     private boolean verify_purchased;
-
     private long point;
 
-    
-    private boolean enabled;
-
-    
-    private String verificationCode;
-
     @ManyToOne
-    @JoinColumn(name = "typeCustomer_id", referencedColumnName = "typeCustomer_id")
+    @JoinColumn(name = "typeCustomer_Id", referencedColumnName = "typeCustomer_id")
     private TypeCustomer typeCustomer;
 
-    @ManyToOne
-    @JoinColumn(name = "role_id", referencedColumnName = "role_id")
-    private Role role;
-
-    @OneToMany(mappedBy = "customer")
+    @OneToMany(mappedBy = "customer", fetch = FetchType.EAGER)
+    @JsonBackReference
     private Set<Transaction> transactions;
 
-    
-    private LocalDateTime expirationTime;
 }
