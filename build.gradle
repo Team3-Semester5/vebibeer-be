@@ -36,6 +36,7 @@ dependencies {
 	// clound
 	implementation 'com.cloudinary:cloudinary-http44:1.29.0'
 	// Jackson Datatype Hibernate
+	implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.4'
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-hibernate5:2.15.4'
 
 	// file upload

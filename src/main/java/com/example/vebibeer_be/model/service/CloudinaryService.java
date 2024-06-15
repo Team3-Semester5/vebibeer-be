@@ -1,9 +1,9 @@
 package com.example.vebibeer_be.model.service;
 
 import java.io.IOException;
-import java.util.Map; // Sửa import cho Map
+import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Value; // Sửa import cho @Value
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -24,6 +24,9 @@ public class CloudinaryService {
     }
 
     public String uploadFile(MultipartFile file) throws IOException {
+        if (file.isEmpty()) {
+            throw new RuntimeException("Empty file");
+        }
         Map uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.emptyMap());
         return uploadResult.get("url").toString();
     }

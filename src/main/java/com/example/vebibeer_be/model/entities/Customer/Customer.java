@@ -5,6 +5,7 @@ import java.util.Set;
 
 import com.example.vebibeer_be.model.entities.Transaction;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.Entity;
@@ -16,6 +17,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -39,6 +41,7 @@ public class Customer {
     private String password;
     private String customer_status;
     private String customer_fullname;
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate customer_dob;
     private String customer_img_ava;
     private String customer_nationality;
@@ -55,4 +58,6 @@ public class Customer {
     @JsonBackReference
     private Set<Transaction> transactions;
 
+    // Fields for password change
+   
 }
