@@ -17,27 +17,27 @@ import com.example.vebibeer_be.model.repo.BusCompanyRepo.BusCompanyRepo;
 public class BusCompanyService {
 
     @Autowired
-    private BusCompanyRepo busCompanyRepository;
+    private BusCompanyRepo busCompanyRepo;
 
     // Create a new BusCompany
     public BusCompany createBusCompany(BusCompany busCompany) {
-        return busCompanyRepository.save(busCompany);
+        return busCompanyRepo.save(busCompany);
     }
 
     // Retrieve all BusCompanies
     public List<BusCompany> getAllBusCompanies() {
-        return busCompanyRepository.findAll();
+        return busCompanyRepo.findAll();
     }
 
     // Retrieve a BusCompany by ID
     public Optional<BusCompany> getBusCompanyById(int id) {
-        return busCompanyRepository.findById(id);
+        return busCompanyRepo.findById(id);
     }
 
     // Update an existing BusCompany
     @Transactional
     public BusCompany updateBusCompany(int id, BusCompany busCompanyDetails) {
-        return busCompanyRepository.findById(id).map(existingBusCompany -> {
+        return busCompanyRepo.findById(id).map(existingBusCompany -> {
             existingBusCompany.setUsername(busCompanyDetails.getUsername());
             existingBusCompany.setPassword(busCompanyDetails.getPassword());
             existingBusCompany.setBusCompany_status(busCompanyDetails.getBusCompany_status());
@@ -49,12 +49,12 @@ public class BusCompanyService {
             existingBusCompany.setBusCompany_name(busCompanyDetails.getBusCompany_name());
             existingBusCompany.setBusCompany_location(busCompanyDetails.getBusCompany_location());
             existingBusCompany.setBusCompany_contract(busCompanyDetails.getBusCompany_contract());
-            return busCompanyRepository.save(existingBusCompany);
+            return busCompanyRepo.save(existingBusCompany);
         }).orElseThrow(() -> new RuntimeException("BusCompany not found with id " + id));
     }
 
     // Delete a BusCompany by ID
     public void deleteBusCompany(int id) {
-        busCompanyRepository.deleteById(id);
+        busCompanyRepo.deleteById(id);
     }
 }
