@@ -18,7 +18,7 @@ import com.example.vebibeer_be.model.service.BusCompanyService.DriverService;
 
 
 @RestController
-@RequestMapping("/driver")
+@RequestMapping("/buscomapany/driver")
 public class RestDriverController {
      @Autowired
     DriverService driverService = new DriverService();

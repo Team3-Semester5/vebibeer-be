@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.Set;
 
 import com.example.vebibeer_be.model.entities.Transaction;
+import com.example.vebibeer_be.model.entities.User;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import jakarta.persistence.Entity;
@@ -28,13 +29,11 @@ import lombok.ToString;
 @ToString
 @Entity
 @Table(name = "Customer")
-public class Customer {
+public class Customer extends User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int customer_id;
 
-    private String username;
-    private String password;
     private String customer_status;
     private String customer_fullname;
     private LocalDate customer_dob;

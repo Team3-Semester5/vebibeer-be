@@ -17,7 +17,7 @@ import com.example.vebibeer_be.model.entities.BusCompany.Service;
 import com.example.vebibeer_be.model.service.BusCompanyService.ServicesService;
 
 @RestController
-@RequestMapping("/service")
+@RequestMapping("/admin/service")
 public class RestServiceController {
     @Autowired
     ServicesService servicesService = new ServicesService();

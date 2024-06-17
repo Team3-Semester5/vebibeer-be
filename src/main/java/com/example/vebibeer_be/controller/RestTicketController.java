@@ -18,7 +18,7 @@ import com.example.vebibeer_be.model.entities.BusCompany.Ticket;
 import com.example.vebibeer_be.model.service.BusCompanyService.TicketService;
 
 @RestController
-@RequestMapping("/tickets")
+@RequestMapping("/buscomapany/tickets")
 public class RestTicketController {
     @Autowired
     TicketService ticketService = new TicketService();

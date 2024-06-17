@@ -31,7 +31,7 @@ public class RestRouteController {
         return new ResponseEntity<List<Route>>(routes, HttpStatus.OK);
     }
     
-    @PostMapping(value = {"/save", "/save/"})
+    @PostMapping(value = {"/buscomapany/save", "/buscomapany/save/"})
     public ResponseEntity<Route> save(@RequestBody Route newRoute) {
         if (newRoute == null) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -45,7 +45,7 @@ public class RestRouteController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
     
-    @GetMapping(value = {"/{id}", "/{id}/"})
+    @GetMapping(value = {"/buscomapany/{id}", "/buscomapany/{id}/"})
     public ResponseEntity<Route> getById(@PathVariable(name = "id")int route_id) {
         Route route = routeService.getById(route_id);
         if (route == null) {
@@ -54,7 +54,7 @@ public class RestRouteController {
         return new ResponseEntity<Route>(route, HttpStatus.OK);
     }
 
-    @DeleteMapping(value = {"/delete/{id}", "/delete/{id}/"})
+    @DeleteMapping(value = {"/buscomapany/delete/{id}", "/buscomapany/delete/{id}/"})
     public ResponseEntity<Route> delete(@PathVariable(name = "id") int route_id){
         Route route = routeService.getById(route_id);
         if (route == null) {

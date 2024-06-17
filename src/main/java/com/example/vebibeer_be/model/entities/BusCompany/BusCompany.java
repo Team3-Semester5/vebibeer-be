@@ -1,5 +1,7 @@
 package com.example.vebibeer_be.model.entities.BusCompany;
 
+import com.example.vebibeer_be.model.entities.User;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -21,13 +23,11 @@ import lombok.ToString;
 @ToString
 @Entity
 @Table(name = "buscompany")
-public class BusCompany {
+public class BusCompany extends User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int busCompany_id;
 
-    private String username;
-    private String password;
     private String busCompany_status;
     private String busCompany_fullname;
     private String busCompany_dob;

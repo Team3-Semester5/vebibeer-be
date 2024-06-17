@@ -17,7 +17,7 @@ import com.example.vebibeer_be.model.entities.Voucher;
 import com.example.vebibeer_be.model.service.VoucherService;
 
 @RestController
-@RequestMapping("/voucher")
+@RequestMapping("/buscomapany/voucher")
 public class RestVoucherController {
     @Autowired
     VoucherService voucherService = new VoucherService();

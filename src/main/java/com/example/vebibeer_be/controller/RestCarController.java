@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 
 @RestController
-@RequestMapping(value = "/car")
+@RequestMapping(value = "/buscomapany/car")
 public class RestCarController {
     @Autowired
     CarService carService = new CarService();
