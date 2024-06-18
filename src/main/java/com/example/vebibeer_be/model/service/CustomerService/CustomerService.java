@@ -5,20 +5,23 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.example.vebibeer_be.Config.JwtTokenUtil;
-import com.example.vebibeer_be.dto.UserRegistrationDto;
+import com.example.vebibeer_be.exception.BadRequestException;
 import com.example.vebibeer_be.model.entities.Customer.Customer;
 import com.example.vebibeer_be.model.entities.Customer.TypeCustomer;
 import com.example.vebibeer_be.model.repo.CustomerRepo.CustomerRepo;
 import com.example.vebibeer_be.model.repo.CustomerRepo.TypeCustomerRepo;
-import com.example.vebibeer_be.model.service.UserDetailsServiceImpl;
+import com.example.vebibeer_be.payload.LoginRequest;
+import com.example.vebibeer_be.payload.SignUpRequest;
+import com.example.vebibeer_be.security.TokenProvider;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
@@ -55,25 +58,35 @@ public class CustomerService {
     private PasswordEncoder passwordEncoder;
 
     @Autowired
-    private JwtTokenUtil jwtUtil;
+    private TokenProvider tokenProvider;
 
     @Autowired
-    private UserDetailsServiceImpl userDetailsService;
+    private AuthenticationManager authenticationManager;
 
-    public void register(UserRegistrationDto registrationDto) {
+    public void register(SignUpRequest customerSignup) {
+        // if (customerRepo.findByUsername(customerSignup.getUsername()) != null) {
+        // throw new BadRequestException("Email address already in use.");
+        // }
+
         Customer user = new Customer();
-        user.setUsername(registrationDto.getUsername());
-        user.setPassword(passwordEncoder.encode(registrationDto.getPassword()));
+        user.setCustomer_fullname(customerSignup.getFullname());
+        user.setUsername(customerSignup.getUsername());
+        user.setPassword(passwordEncoder.encode(customerSignup.getPassword()));
         user.setCustomer_status("not_confirmed");
         customerRepo.save(user);
-        UserDetails userDetails = userDetailsService.loadUserByUsername(registrationDto.getUsername());
-        String token = jwtUtil.generateToken(userDetails);
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        customerSignup.getUsername(),
+                        customerSignup.getPassword()));
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        String token = tokenProvider.createToken(authentication);
         try {
             sendVerificationEmail(user, token);
         } catch (UnsupportedEncodingException | MessagingException e) {
             e.printStackTrace();
         }
-        
 
     }
 
@@ -86,7 +99,7 @@ public class CustomerService {
 
     private void sendVerificationEmail(Customer user, String token)
             throws MessagingException, UnsupportedEncodingException {
-                
+
         String toAddress = user.getUsername();
         String fromAddress = "chumlu2102@gmail.com";
         String senderName = "Vebibeer";

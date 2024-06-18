@@ -32,7 +32,13 @@ public class RestCartController {
 
     @GetMapping(value = { "", "/" })
     public ResponseEntity<List<TicketDTO>> getCart(HttpSession session) {
-        List<Ticket> cart = (List<Ticket>) session.getAttribute("cart");
+        List<Ticket> cart = new ArrayList<>();
+        try {
+            cart = (List<Ticket>) session.getAttribute("cart");
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        
         if (cart == null) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
