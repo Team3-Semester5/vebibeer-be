@@ -12,6 +12,9 @@ import org.springframework.web.multipart.MultipartFile;
 import com.example.vebibeer_be.dto.PasswordChangeDTO;
 import com.example.vebibeer_be.model.entities.Customer.Customer;
 import com.example.vebibeer_be.model.service.CustomerService.CustomerService;
+
+import jakarta.servlet.http.HttpSession;
+
 import com.example.vebibeer_be.model.service.CloudinaryService;
 
 @RestController
@@ -78,6 +81,7 @@ public class RestCustomerController {
             customerService.saveCustomer(customer);
 
             return new ResponseEntity<>(customer, HttpStatus.OK);
+            
         } catch (IOException e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -133,5 +137,26 @@ public class RestCustomerController {
     }
     
 
-    
+// new update below
+
+    @GetMapping("/username/{username}")
+    public ResponseEntity<Customer> getCustomerByUsername(@PathVariable("username") String username) {
+        Customer customer = customerService.findByUsername(username);
+        if (customer == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(customer, HttpStatus.OK);
+    }
+
+
+    @GetMapping("/login-test")
+    public ResponseEntity<String> loginTest(HttpSession session) {
+        Customer customer = customerService.findByUsername("tandung1");
+        if (customer != null) {
+            session.setAttribute("user", customer.getUsername());
+            return new ResponseEntity<>("Logged in as tandung", HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
+        }
+    }
 }
