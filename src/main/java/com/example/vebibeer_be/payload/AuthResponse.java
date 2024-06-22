@@ -1,11 +1,23 @@
 package com.example.vebibeer_be.payload;
 
+import com.example.vebibeer_be.model.entities.Customer.Customer;
+
 public class AuthResponse {
     private String accessToken;
     private String tokenType = "Bearer";
+    private Customer customer;
 
-    public AuthResponse(String accessToken) {
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
+
+    public AuthResponse(String accessToken, Customer customer) {
         this.accessToken = accessToken;
+        this.customer = customer;
     }
 
     public String getAccessToken() {

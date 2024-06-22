@@ -50,39 +50,39 @@ public class RestCartController {
         return new ResponseEntity<>(cartDto, HttpStatus.OK);
     }
 
-    @PostMapping(value = { "/{idTicket}", "/{idTicket}/" })
-    public ResponseEntity<List<TicketDTO>> addToCart(HttpSession session, @PathVariable int idTicket) {
-        List<Ticket> cart = (List<Ticket>) session.getAttribute("cart");
-        if (cart == null) {
-            cart = new ArrayList<>();
-            session.setAttribute("cart", cart);
-        }
-        Ticket ticket = ticketService.getById(idTicket);
-        cart.add(ticket);
-        session.setAttribute("cart", cart);
-        List<TicketDTO> cartDto = new ArrayList<>();
-        for (Ticket t : cart) {
-            cartDto.add(convertToDto(t));
-        }
-        return new ResponseEntity<>(cartDto, HttpStatus.OK);
-    }
+    // @PostMapping(value = { "/{idTicket}", "/{idTicket}/" })
+    // public ResponseEntity<List<TicketDTO>> addToCart(HttpSession session, @PathVariable int idTicket) {
+    //     List<Ticket> cart = (List<Ticket>) session.getAttribute("cart");
+    //     if (cart == null) {
+    //         cart = new ArrayList<>();
+    //         session.setAttribute("cart", cart);
+    //     }
+    //     Ticket ticket = ticketService.getById(idTicket);
+    //     cart.add(ticket);
+    //     session.setAttribute("cart", cart);
+    //     List<TicketDTO> cartDto = new ArrayList<>();
+    //     for (Ticket t : cart) {
+    //         cartDto.add(convertToDto(t));
+    //     }
+    //     return new ResponseEntity<>(cartDto, HttpStatus.OK);
+    // }
 
-    @DeleteMapping(value = { "/{idTicket}", "/{idTicket}/" })
-    public ResponseEntity<List<TicketDTO>> deleteFromCart(HttpSession session,
-            @PathVariable int idTicket) {
-        List<Ticket> cart = (List<Ticket>) session.getAttribute("cart");
-        if (cart == null) {
-            cart = new ArrayList<>();
-            session.setAttribute("cart", cart);
-        }
-        Ticket ticket = ticketService.getById(idTicket);
-        cart.remove(ticket);
-        session.setAttribute("cart", cart);
-        List<TicketDTO> cartDto = new ArrayList<>();
-        for (Ticket t : cart) {
-            cartDto.add(convertToDto(t));
-        }
-        return new ResponseEntity<>(cartDto, HttpStatus.OK);
-    }
+    // @DeleteMapping(value = { "/{idTicket}", "/{idTicket}/" })
+    // public ResponseEntity<List<TicketDTO>> deleteFromCart(HttpSession session,
+    //         @PathVariable int idTicket) {
+    //     List<Ticket> cart = (List<Ticket>) session.getAttribute("cart");
+    //     if (cart == null) {
+    //         cart = new ArrayList<>();
+    //         session.setAttribute("cart", cart);
+    //     }
+    //     Ticket ticket = ticketService.getById(idTicket);
+    //     cart.remove(ticket);
+    //     session.setAttribute("cart", cart);
+    //     List<TicketDTO> cartDto = new ArrayList<>();
+    //     for (Ticket t : cart) {
+    //         cartDto.add(convertToDto(t));
+    //     }
+    //     return new ResponseEntity<>(cartDto, HttpStatus.OK);
+    // }
 
 }

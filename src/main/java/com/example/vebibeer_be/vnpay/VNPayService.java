@@ -13,6 +13,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
+import java.util.TreeMap;
+
 
 import org.springframework.stereotype.Service;
 import jakarta.servlet.http.HttpServletRequest;
@@ -28,11 +30,11 @@ public class VNPayService {
         String vnp_TmnCode = VNPayConfig.vnp_TmnCode;
         String orderType = "order-type";
 
-        Map<String, String> vnp_Params = new HashMap<>();
+        Map<String, String> vnp_Params = new TreeMap<>(); // Sử dụng TreeMap để tự động sắp xếp theo key
         vnp_Params.put("vnp_Version", vnp_Version);
         vnp_Params.put("vnp_Command", vnp_Command);
         vnp_Params.put("vnp_TmnCode", vnp_TmnCode);
-        vnp_Params.put("vnp_Amount", String.valueOf(total * 100));
+        vnp_Params.put("vnp_Amount", String.valueOf(total * 100000));
         vnp_Params.put("vnp_CurrCode", "VND");
         vnp_Params.put("vnp_TxnRef", vnp_TxnRef);
         vnp_Params.put("vnp_OrderInfo", orderInfo);
@@ -52,33 +54,38 @@ public class VNPayService {
         String vnp_ExpireDate = formatter.format(cld.getTime());
         vnp_Params.put("vnp_ExpireDate", vnp_ExpireDate);
 
-        List<String> fieldNames = new ArrayList<>(vnp_Params.keySet());
-        Collections.sort(fieldNames);
         StringBuilder hashData = new StringBuilder();
         StringBuilder query = new StringBuilder();
-        Iterator<String> itr = fieldNames.iterator();
-        while (itr.hasNext()) {
-            String fieldName = itr.next();
-            String fieldValue = vnp_Params.get(fieldName);
-            if (fieldValue != null && !fieldValue.isEmpty()) {
+        for (Map.Entry<String, String> entry : vnp_Params.entrySet()) {
+            if (entry.getValue() != null && !entry.getValue().isEmpty()) {
                 try {
-                    hashData.append(fieldName).append('=').append(URLEncoder.encode(fieldValue, StandardCharsets.UTF_8.toString()));
-                    query.append(URLEncoder.encode(fieldName, StandardCharsets.UTF_8.toString())).append('=')
-                         .append(URLEncoder.encode(fieldValue, StandardCharsets.UTF_8.toString()));
-                    if (itr.hasNext()) {
-                        query.append('&');
-                        hashData.append('&');
-                    }
+                    hashData.append(entry.getKey()).append('=')
+                            .append(URLEncoder.encode(entry.getValue(), StandardCharsets.UTF_8.toString()))
+                            .append('&');
                 } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace(); // Consider using a proper logging framework
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+                try {
+                    query.append(URLEncoder.encode(entry.getKey(), StandardCharsets.UTF_8.toString())).append('=')
+                            .append(URLEncoder.encode(entry.getValue(), StandardCharsets.UTF_8.toString())).append('&');
+                } catch (UnsupportedEncodingException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
                 }
             }
         }
-        String queryUrl = query.toString();
+
+        // Loại bỏ ký tự '&' cuối cùng
+        if (hashData.length() > 0)
+            hashData.deleteCharAt(hashData.length() - 1);
+        if (query.length() > 0)
+            query.deleteCharAt(query.length() - 1);
+
         String vnp_SecureHash = VNPayConfig.hmacSHA512(VNPayConfig.vnp_HashSecret, hashData.toString());
-        queryUrl += "&vnp_SecureHash=" + vnp_SecureHash;
-        String paymentUrl = VNPayConfig.vnp_PayUrl + "?" + queryUrl;
-        return paymentUrl;
+        query.append("&vnp_SecureHash=" + vnp_SecureHash);
+
+        return VNPayConfig.vnp_PayUrl + "?" + query.toString();
     }
 
     public int orderReturn(HttpServletRequest request) {
@@ -89,7 +96,8 @@ public class VNPayService {
             String fieldValue = request.getParameter(fieldName);
             if (fieldValue != null && !fieldValue.isEmpty()) {
                 try {
-                    fields.put(URLEncoder.encode(fieldName, StandardCharsets.UTF_8.toString()), URLEncoder.encode(fieldValue, StandardCharsets.UTF_8.toString()));
+                    fields.put(URLEncoder.encode(fieldName, StandardCharsets.UTF_8.toString()),
+                            URLEncoder.encode(fieldValue, StandardCharsets.UTF_8.toString()));
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                 }

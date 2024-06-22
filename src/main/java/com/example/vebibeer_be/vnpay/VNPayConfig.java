@@ -16,9 +16,9 @@ import jakarta.servlet.http.HttpServletRequest;
 @Component
 public class VNPayConfig {
     public static String vnp_PayUrl = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
-    public static String vnp_Returnurl = "/vnpay-payment";
-    public static String vnp_TmnCode = "507FEZ93";
-    public static String vnp_HashSecret = "9XWC3JZIJ79TVQL72DSBC5CHBSZ7GS53";
+    public static String vnp_Returnurl = "/cuong/vnpay-payment";
+    public static String vnp_TmnCode = "2LAF05XX";
+    public static String vnp_HashSecret = "LMY8A1M01U175JJRIUXKXXHTEU1VYPBE";
     public static String vnp_apiUrl = "https://sandbox.vnpayment.vn/merchant_webapi/api/transaction";
 
     public static String md5(String message) {
@@ -57,7 +57,7 @@ public class VNPayConfig {
         return digest;
     }
 
-    //Util for VNPAY
+    // Util for VNPAY
     public static String hashAllFields(Map fields) {
         List fieldNames = new ArrayList(fields.keySet());
         Collections.sort(fieldNames);
@@ -75,7 +75,7 @@ public class VNPayConfig {
                 sb.append("&");
             }
         }
-        return hmacSHA512(vnp_HashSecret,sb.toString());
+        return hmacSHA512(vnp_HashSecret, sb.toString());
     }
 
     public static String hmacSHA512(final String key, final String data) {
@@ -94,6 +94,7 @@ public class VNPayConfig {
             for (byte b : result) {
                 sb.append(String.format("%02x", b & 0xff));
             }
+            System.out.println(secretKey.toString());
             return sb.toString();
 
         } catch (Exception ex) {

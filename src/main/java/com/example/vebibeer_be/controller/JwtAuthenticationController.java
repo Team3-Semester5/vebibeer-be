@@ -32,7 +32,6 @@ public class JwtAuthenticationController {
 
     @PostMapping("/authenticate")
     public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginRequest) {
-
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         loginRequest.getUsername(),
@@ -41,9 +40,9 @@ public class JwtAuthenticationController {
         );
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
-
+        Customer customer = customerService.findByUsername(loginRequest.getUsername()).orElse(new Customer());
         String token = tokenProvider.createToken(authentication);
-        return ResponseEntity.ok(new AuthResponse(token));
+        return ResponseEntity.ok(new AuthResponse(token, customer));
     }
 
     @PostMapping("/register")
@@ -65,6 +64,21 @@ public class JwtAuthenticationController {
                 }
             }
             return ResponseEntity.ok(customer);
+        }
+        return new ResponseEntity<>(HttpStatus.GATEWAY_TIMEOUT);
+    }
+
+    @GetMapping("/forgetPassword")
+    public ResponseEntity<?> forgetPassword(@RequestParam("token") String token,
+            @RequestParam("username") String username) {
+        if (tokenProvider.validateToken(token)) {
+            Optional<Customer> customer = customerService.findByUsername(username);
+            for (Customer oldCustomer : customerService.getAllCustomer()) {
+                if (username.equals(oldCustomer.getUsername())) {
+                    return ResponseEntity.ok(customer);
+                }
+            }
+            
         }
         return new ResponseEntity<>(HttpStatus.GATEWAY_TIMEOUT);
     }
