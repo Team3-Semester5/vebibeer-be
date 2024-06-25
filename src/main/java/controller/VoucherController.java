@@ -54,9 +54,5 @@ public class VoucherController {
         }
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteVoucher(@PathVariable int id) {
-        voucherService.deleteVoucher(id);
-        return ResponseEntity.noContent().build();
-    }
+
 }

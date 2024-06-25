@@ -34,29 +34,6 @@ public class CarController {
         return carService.getAllCars();
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Car> getCarById(@PathVariable int id) {
-        Optional<Car> car = carService.getCarById(id);
-        if (car.isPresent()) {
-            return ResponseEntity.ok(car.get());
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Car> updateCar(@PathVariable int id, @RequestBody Car carDetails) {
-        try {
-            Car updatedCar = carService.updateCar(id, carDetails);
-            return ResponseEntity.ok(updatedCar);
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
-    }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCar(@PathVariable int id) {
-        carService.deleteCar(id);
-        return ResponseEntity.noContent().build();
-    }
 }

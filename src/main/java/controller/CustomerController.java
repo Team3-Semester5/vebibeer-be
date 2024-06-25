@@ -47,18 +47,5 @@ public class CustomerController {
             return ResponseEntity.notFound().build();
         }
     }
-    @PutMapping("/{id}")
-    public ResponseEntity<Customer> putMethodName(@PathVariable int id, @RequestBody Customer customer) {
-        try {
-            Customer updaCustomer = customerService.updateCustomer(id, customer);
-            return ResponseEntity.ok(updaCustomer);
-        } catch (Exception e) {
-            return ResponseEntity.notFound().build();
-        }
-    }
-    @DeleteMapping("/{id}")    
-    public ResponseEntity<Void> deleteBusCompany(@PathVariable int id) {
-        customerService.deleteCustomer(id);;
-        return ResponseEntity.noContent().build();
-    }
+
 }
