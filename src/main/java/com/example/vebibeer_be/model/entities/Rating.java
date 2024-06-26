@@ -39,7 +39,7 @@ public class Rating {
     @JoinColumn(name = "customer_id", referencedColumnName = "customer_id")
     private Customer customer;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "busCompany_id", referencedColumnName = "busCompany_id")
     private BusCompany busCompany;
     

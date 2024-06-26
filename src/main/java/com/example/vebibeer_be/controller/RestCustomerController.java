@@ -16,9 +16,6 @@ import com.example.vebibeer_be.model.entities.Customer.Customer;
 import com.example.vebibeer_be.model.service.CloudinaryService;
 import com.example.vebibeer_be.model.service.CustomerService.CustomerService;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
-
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;

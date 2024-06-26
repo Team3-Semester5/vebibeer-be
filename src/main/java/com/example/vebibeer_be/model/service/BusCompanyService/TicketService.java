@@ -11,22 +11,35 @@ import com.example.vebibeer_be.model.repo.BusCompanyRepo.TicketRepo;
 @Service
 public class TicketService {
     @Autowired
-    TicketRepo ticketRepo;
+    private TicketRepo ticketRepo;
 
-    public List<Ticket> getAll(){
+    public List<Ticket> getAll() {
         return ticketRepo.findAll();
     }
 
-    public Ticket getById(int ticket_id){
-        return ticketRepo.getReferenceById(ticket_id);
+    public Ticket getById(int ticketId) {
+        return ticketRepo.findById(ticketId).orElse(null);
     }
 
-    public void save(Ticket ticket){
+    public void save(Ticket ticket) {
         ticketRepo.save(ticket);
     }
 
-    public void delete(int ticket_id){
-        ticketRepo.deleteById(ticket_id);;
+    public void delete(int ticketId) {
+        ticketRepo.deleteById(ticketId);
     }
 
+    public double getLowestTicketPrice() {
+        return ticketRepo.findAll().stream()
+                         .mapToDouble(Ticket::getTicket_price)
+                         .min()
+                         .orElse(0.0);
+    }
+
+    public double getHighestTicketPrice() {
+        return ticketRepo.findAll().stream()
+                         .mapToDouble(Ticket::getTicket_price)
+                         .max()
+                         .orElse(0.0);
+    }
 }

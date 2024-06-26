@@ -41,4 +41,5 @@ public class BusCompany extends User {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "location_id", referencedColumnName = "location_id")
     private Location location;
+
 }

@@ -2,6 +2,7 @@ package com.example.vebibeer_be.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,14 +15,22 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.vebibeer_be.dto.RatingDTO;
 import com.example.vebibeer_be.model.entities.Rating;
+import com.example.vebibeer_be.model.entities.Customer.Customer;
 import com.example.vebibeer_be.model.service.RatingService;
+import com.example.vebibeer_be.model.service.BusCompanyService.BusCompanyService;
+import com.example.vebibeer_be.model.service.CustomerService.CustomerService;
 
 @RestController
 @RequestMapping("/rating")
 public class RestRatingController {
     @Autowired
     RatingService ratingService = new RatingService();
+    @Autowired
+    CustomerService customerService = new CustomerService();
+    @Autowired
+    BusCompanyService busCompanyService = new BusCompanyService();
 
     @GetMapping(value = {"", "/"})
     public ResponseEntity<List<Rating>> showList() {
@@ -33,17 +42,17 @@ public class RestRatingController {
     }
     
     @PostMapping(value = {"/save", "/save/"})
-    public ResponseEntity<Rating> save(@RequestBody Rating newRating) {
+    public ResponseEntity<Rating> save(@RequestBody RatingDTO newRating) {
         if (newRating == null) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            return ResponseEntity.badRequest().build();
         }
-        Rating Rating = ratingService.getById(newRating.getRating_id());
-        if (Rating == null) {
-            ratingService.save(Rating);
-            return new ResponseEntity<>(HttpStatus.CREATED);
-        }
-        ratingService.save(Rating);
-        return new ResponseEntity<>(HttpStatus.OK);
+        System.out.println(newRating.toString());
+        int customerId = newRating.getCustomer_id();
+        System.out.println(customerId);
+        Customer customer = customerService.getCustomerById(customerId);
+        Rating rating = new Rating(0, newRating.getAmount_star(), newRating.getRating_content(), newRating.getRating_editTime(), customer, busCompanyService.getById(newRating.getBusCompany_id()));
+        ratingService.save(rating);
+        return ResponseEntity.ok(rating);
     }
     
     @GetMapping(value = {"/{idBus}", "/{idBus}/"})

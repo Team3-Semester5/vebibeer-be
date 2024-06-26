@@ -19,7 +19,6 @@ import com.example.vebibeer_be.model.entities.Customer.Customer;
 import com.example.vebibeer_be.model.entities.Customer.TypeCustomer;
 import com.example.vebibeer_be.model.repo.CustomerRepo.CustomerRepo;
 import com.example.vebibeer_be.model.repo.CustomerRepo.TypeCustomerRepo;
-import com.example.vebibeer_be.payload.LoginRequest;
 import com.example.vebibeer_be.payload.SignUpRequest;
 import com.example.vebibeer_be.security.TokenProvider;
 
@@ -29,17 +28,16 @@ import jakarta.mail.internet.MimeMessage;
 @Service
 public class CustomerService {
     @Autowired
-    CustomerRepo customerRepo;
-
+    private CustomerRepo customerRepo;
     @Autowired
-    TypeCustomerRepo typeCustomerRepo;
+    private TypeCustomerRepo typeCustomerRepo;
 
     public List<Customer> getAllCustomer() {
         return customerRepo.findAll();
     }
 
     public Customer getCustomerById(int customer_id) {
-        return customerRepo.getReferenceById(customer_id);
+        return customerRepo.findById(customer_id).get();
     }
 
     public void saveCustomer(Customer customer) {

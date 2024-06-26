@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.vebibeer_be.dto.OrderRequest;
@@ -38,7 +37,7 @@ public class RestVNPaymentController {
     }
 
     @GetMapping("/vnpay-payment")
-    public String GetMapping(HttpServletRequest request, Model model) {
+    public ResponseEntity<?> GetMapping(HttpServletRequest request, Model model) {
         int paymentStatus = vnPayService.orderReturn(request);
 
         String orderInfo = request.getParameter("vnp_OrderInfo");
@@ -50,7 +49,7 @@ public class RestVNPaymentController {
         model.addAttribute("totalPrice", totalPrice);
         model.addAttribute("paymentTime", paymentTime);
         model.addAttribute("transactionId", transactionId);
-
-        return paymentStatus == 1 ? "OrderSuccess" : "OrderFail";
+        String status = paymentStatus == 1 ? "OrderSuccess" : "OrderFail";
+        return ResponseEntity.ok(status);
     }
 }
