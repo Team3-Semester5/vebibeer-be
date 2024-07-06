@@ -5,14 +5,17 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.vebibeer_be.model.entities.Rating;
 import com.example.vebibeer_be.model.entities.BusCompany.BusCompany;
 import com.example.vebibeer_be.model.service.BusCompanyService.BusCompanyService;
 
@@ -59,4 +62,14 @@ public class RestBusCompanyController {
         return new ResponseEntity<BusCompany>(busCompany, HttpStatus.OK);
     }
 
+    @PutMapping("update/{id}")
+    // @CrossOrigin(origins = "http://localhost:3000")
+    public ResponseEntity<BusCompany> updateBusCompany(@PathVariable(name = "id") int id, @RequestBody BusCompany busCompanyDetails) {
+        try {
+            BusCompany updatedBusCompany = busCompanyService.updateBusCompany(id, busCompanyDetails);
+            return ResponseEntity.ok(updatedBusCompany);
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
 }

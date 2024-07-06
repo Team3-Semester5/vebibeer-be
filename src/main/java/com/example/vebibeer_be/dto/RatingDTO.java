@@ -17,7 +17,7 @@ public class RatingDTO {
     private String rating_content;
     private Date rating_editTime;
     private int amount_star;
-    private int customer_id;
+    private String username;
     private int busCompany_id;
    
 }

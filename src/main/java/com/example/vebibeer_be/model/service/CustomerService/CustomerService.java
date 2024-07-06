@@ -81,7 +81,7 @@ public class CustomerService {
 
         String token = tokenProvider.createToken(authentication);
         try {
-            sendVerificationEmail(user, token);
+            sendVerificationEmail(user, token, "http://localhost:8080/api/register/verify");
         } catch (UnsupportedEncodingException | MessagingException e) {
             e.printStackTrace();
         }
@@ -95,7 +95,7 @@ public class CustomerService {
     @Autowired
     JavaMailSender mailSender;
 
-    private void sendVerificationEmail(Customer user, String token)
+    public void sendVerificationEmail(Customer user, String token, String url)
             throws MessagingException, UnsupportedEncodingException {
 
         String toAddress = user.getUsername();
@@ -116,7 +116,7 @@ public class CustomerService {
         helper.setSubject(subject);
 
         content = content.replace("[[name]]", user.getUsername());
-        String verifyURL = "http://localhost:8080/api/register/verify?token=" + token + "&username="
+        String verifyURL = url + "?token=" + token + "&username="
                 + user.getUsername();
         content = content.replace("[[URL]]", verifyURL);
         helper.setText(content, true);
