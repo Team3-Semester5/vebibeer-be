@@ -2,7 +2,6 @@ package com.example.vebibeer_be.model.service.BusCompanyService;
 
 import java.util.List;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,29 +15,29 @@ public class BusCompanyService {
     @Autowired
     BusCompanyRepo busCompanyRepo;
 
-    public List<BusCompany> getAll(){
+    public List<BusCompany> getAll() {
         return busCompanyRepo.findAll();
     }
 
-    public BusCompany getById(int busCompany_id){
+    public BusCompany getById(int busCompany_id) {
         return busCompanyRepo.getReferenceById(busCompany_id);
     }
 
-    public void save(BusCompany busCompany){
+    public void save(BusCompany busCompany) {
         busCompanyRepo.save(busCompany);
     }
 
-    public void delete(int busCompany_id){
+    public void delete(int busCompany_id) {
         busCompanyRepo.deleteById(busCompany_id);
     }
-    
+
     @Transactional
     public BusCompany updateBusCompany(int id, BusCompany busCompanyDetails) {
         return busCompanyRepo.findById(id).map(existingBusCompany -> {
             existingBusCompany.setUserId(null);
             existingBusCompany.setUsername(busCompanyDetails.getUsername());
             existingBusCompany.setPassword(busCompanyDetails.getPassword());
-            existingBusCompany.setBusCompany_status(busCompanyDetails.getBusCompany_status());  
+            existingBusCompany.setBusCompany_status(busCompanyDetails.getBusCompany_status());
             existingBusCompany.setBusCompany_fullname(busCompanyDetails.getBusCompany_fullname());
             existingBusCompany.setBusCompany_dob(busCompanyDetails.getBusCompany_dob());
             existingBusCompany.setBusCompany_imgUrl(busCompanyDetails.getBusCompany_imgUrl());

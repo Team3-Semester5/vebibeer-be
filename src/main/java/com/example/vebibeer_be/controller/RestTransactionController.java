@@ -63,4 +63,10 @@ public class RestTransactionController {
         transactionService.delete(Transaction_id);
         return new ResponseEntity<Transaction>(Transaction, HttpStatus.OK);
     }
+
+    @GetMapping("/customer/{customerId}")
+    public ResponseEntity<List<Object[]>> getTransactionsByCustomerId(@PathVariable int customerId) {
+        List<Object[]> transactions = transactionService.getTransactionInfoByCustomerId(customerId);
+        return ResponseEntity.ok(transactions);
+    }
 }

@@ -29,4 +29,9 @@ public class TransactionService {
         transactionRepo.deleteById(transaction_id);
     }
 
+    public List<Object[]> getTransactionInfoByCustomerId(int customerId) {
+        List<Object[]> transactions = transactionRepo.findTransactionInfoByCustomerId(customerId);
+        return transactions;
+    }
+
 }
