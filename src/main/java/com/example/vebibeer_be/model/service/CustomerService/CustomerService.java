@@ -41,6 +41,7 @@ public class CustomerService {
     }
 
     public void saveCustomer(Customer customer) {
+        customer.setPassword(passwordEncoder.encode(customer.getPassword()));
         customerRepo.save(customer);
     }
 
@@ -61,11 +62,10 @@ public class CustomerService {
     @Autowired
     private AuthenticationManager authenticationManager;
 
-    public void register(SignUpRequest customerSignup) {
-        // if (customerRepo.findByUsername(customerSignup.getUsername()) != null) {
-        // throw new BadRequestException("Email address already in use.");
-        // }
-
+    public boolean register(SignUpRequest customerSignup) {
+        if (customerRepo.findByUsername(customerSignup.getUsername()) != null) {
+            throw new BadRequestException("Email address already in use.");
+        }
         Customer user = new Customer();
         user.setCustomer_fullname(customerSignup.getFullname());
         user.setUsername(customerSignup.getUsername());
@@ -85,6 +85,7 @@ public class CustomerService {
         } catch (UnsupportedEncodingException | MessagingException e) {
             e.printStackTrace();
         }
+        return true;
 
     }
 
@@ -104,6 +105,35 @@ public class CustomerService {
         String subject = "Please verify your registration";
         String content = "Dear [[name]],<br>"
                 + "Please click the link below to verify your registration:<br>"
+                + "<h3><a href=\"[[URL]]\" target=\"_self\">VERIFY</a></h3>"
+                + "Thank you,<br>"
+                + "Your company name.";
+
+        MimeMessage message = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message, true);
+
+        helper.setFrom(fromAddress, senderName);
+        helper.setTo(toAddress);
+        helper.setSubject(subject);
+
+        content = content.replace("[[name]]", user.getUsername());
+        String verifyURL = url + "?token=" + token + "&username="
+                + user.getUsername();
+        content = content.replace("[[URL]]", verifyURL);
+        helper.setText(content, true);
+        mailSender.send(message);
+
+    }
+
+    public void sendChangePasswordEmail(Customer user, String token, String url)
+            throws MessagingException, UnsupportedEncodingException {
+
+        String toAddress = user.getUsername();
+        String fromAddress = "chumlu2102@gmail.com";
+        String senderName = "Vebibeer";
+        String subject = "Please click the button to change your password";
+        String content = "Dear [[name]],<br>"
+                + "Please click the link below to click the button to change your password:<br>"
                 + "<h3><a href=\"[[URL]]\" target=\"_self\">VERIFY</a></h3>"
                 + "Thank you,<br>"
                 + "Your company name.";

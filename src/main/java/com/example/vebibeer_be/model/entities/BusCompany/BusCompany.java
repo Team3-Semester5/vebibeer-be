@@ -1,5 +1,7 @@
 package com.example.vebibeer_be.model.entities.BusCompany;
 
+import org.antlr.v4.runtime.misc.NotNull;
+
 import com.example.vebibeer_be.model.entities.User;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;

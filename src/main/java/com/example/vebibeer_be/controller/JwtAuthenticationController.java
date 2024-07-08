@@ -11,9 +11,9 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtDecoders;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.security.oauth2.jwt.JwtDecoders;
 import org.springframework.security.oauth2.jwt.Jwt;
 
 import com.example.vebibeer_be.dto.PasswordChangeDTO;
@@ -37,6 +37,9 @@ public class JwtAuthenticationController {
 
     @Autowired
     private TokenProvider tokenProvider;
+
+    @Autowired
+    PasswordEncoder passwordEncoder;
 
     @PostMapping("/authenticate")
     public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginRequest) {
@@ -77,18 +80,20 @@ public class JwtAuthenticationController {
     @GetMapping("/forgetPassword")
     public ResponseEntity<?> forgetPassword(@RequestParam("username") String username) {
         Optional<Customer> customer = customerService.findByUsername(username);
+        
         for (Customer oldCustomer : customerService.getAllCustomer()) {
             if (username.equals(oldCustomer.getUsername())) {
+                oldCustomer.setPassword(passwordEncoder.encode("hello1234"));
                 Authentication authentication = authenticationManager.authenticate(
                         new UsernamePasswordAuthenticationToken(
                                 oldCustomer.getUsername(),
-                                oldCustomer.getPassword()));
+                                "hello1234"));
 
                 SecurityContextHolder.getContext().setAuthentication(authentication);
                 String token = tokenProvider.createToken(authentication);
                 try {
-                    customerService.sendVerificationEmail(oldCustomer, token,
-                            "http://localhost:8080/api/changePassword");
+                    customerService.sendChangePasswordEmail(oldCustomer, token,
+                            "http://localhost:3000/changePassword");
                 } catch (UnsupportedEncodingException | MessagingException e) {
                     e.printStackTrace();
                 }
@@ -98,40 +103,32 @@ public class JwtAuthenticationController {
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
-    @GetMapping("/changePassword")
+    @PostMapping("/changePassword")
     public ResponseEntity<?> changePassword(@RequestParam("token") String token,
             @RequestParam("username") String username, @RequestBody PasswordChangeDTO passwordChangeDTO) {
         if (tokenProvider.validateToken(token)) {
-            Optional<Customer> customer = customerService.findByUsername(username);
-            for (Customer oldCustomer : customerService.getAllCustomer()) {
-                if (username.equals(oldCustomer.getUsername())) {
-                    System.out.println("Old Password: " + passwordChangeDTO.getOldPassword());
-                    System.out.println("New Password: " + passwordChangeDTO.getNewPassword());
-                    System.out.println("Confirm Password: " + passwordChangeDTO.getConfirmPassword());
-
-                    if (passwordChangeDTO.getOldPassword() == null ||
-                            passwordChangeDTO.getNewPassword() == null ||
-                            passwordChangeDTO.getConfirmPassword() == null) {
-                        return new ResponseEntity<>("Missing required fields", HttpStatus.BAD_REQUEST);
-                    }
-
-                    if (!passwordChangeDTO.getNewPassword().equals(passwordChangeDTO.getConfirmPassword())) {
-                        return new ResponseEntity<>("New password and confirm password do not match",
-                                HttpStatus.BAD_REQUEST);
-                    }
-
-                    if (!oldCustomer.getPassword().equals(passwordChangeDTO.getOldPassword())) {
-                        return new ResponseEntity<>("Old password is incorrect", HttpStatus.UNAUTHORIZED);
-                    }
-
-                    oldCustomer.setPassword(passwordChangeDTO.getNewPassword());
-                    customerService.saveCustomer(oldCustomer);
-
-                    return new ResponseEntity<>("Password changed successfully", HttpStatus.OK);
-                }
+            if (passwordChangeDTO.getOldPassword() == null ||
+                    passwordChangeDTO.getNewPassword() == null ||
+                    passwordChangeDTO.getConfirmPassword() == null) {
+                return new ResponseEntity<>("Missing required fields", HttpStatus.BAD_REQUEST);
             }
-            return ResponseEntity.ok(customer);
+
+            Customer existingCustomer = customerService.findByUsername(username).orElse(null);
+            if (existingCustomer == null) {
+                return new ResponseEntity<>("Customer not found", HttpStatus.NOT_FOUND);
+            }
+
+            if (!passwordChangeDTO.getNewPassword().equals(passwordChangeDTO.getConfirmPassword())) {
+                return new ResponseEntity<>("New password and confirm password do not match",
+                        HttpStatus.BAD_REQUEST);
+            }
+
+            existingCustomer.setPassword(passwordChangeDTO.getNewPassword());
+            customerService.saveCustomer(existingCustomer);
+
+            return new ResponseEntity<>("Password changed successfully", HttpStatus.OK);
         }
+
         return new ResponseEntity<>(HttpStatus.GATEWAY_TIMEOUT);
 
     }

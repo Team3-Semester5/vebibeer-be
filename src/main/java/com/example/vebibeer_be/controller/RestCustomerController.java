@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -89,6 +90,10 @@ public class RestCustomerController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @PostMapping("/changePassword/{id}")
     public ResponseEntity<String> changePassword(@PathVariable("id") int customerId, @RequestBody PasswordChangeDTO passwordChangeDTO) {
         // Log the received payload for debugging
@@ -111,8 +116,8 @@ public class RestCustomerController {
         if (!passwordChangeDTO.getNewPassword().equals(passwordChangeDTO.getConfirmPassword())) {
             return new ResponseEntity<>("New password and confirm password do not match", HttpStatus.BAD_REQUEST);
         }
-    
-        if (!existingCustomer.getPassword().equals(passwordChangeDTO.getOldPassword())) {
+      
+        if (!passwordEncoder.matches(passwordChangeDTO.getOldPassword(), existingCustomer.getPassword())) {
             return new ResponseEntity<>("Old password is incorrect", HttpStatus.UNAUTHORIZED);
         }
     

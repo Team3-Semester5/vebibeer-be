@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.vebibeer_be.dto.RouteDTO;
 import com.example.vebibeer_be.model.entities.BusCompany.Route;
 import com.example.vebibeer_be.model.service.BusCompanyService.RouteService;
 
@@ -36,17 +37,9 @@ public class RestRouteController {
     }
     
     @PostMapping(value = {"/buscomapany/save", "/buscomapany/save/"})
-    public ResponseEntity<Route> save(@RequestBody Route newRoute) {
-        if (newRoute == null) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
-        Route Route = routeService.getById(newRoute.getRoute_id());
-        if (Route == null) {
-            routeService.save(Route);
-            return new ResponseEntity<>(HttpStatus.CREATED);
-        }
-        routeService.save(Route);
-        return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<?> save(@RequestBody RouteDTO newRoute) {
+        routeService.save(newRoute);
+        return ResponseEntity.ok(newRoute);
     }
     
     @GetMapping(value = {"/buscomapany/{id}", "/buscomapany/{id}/"})
