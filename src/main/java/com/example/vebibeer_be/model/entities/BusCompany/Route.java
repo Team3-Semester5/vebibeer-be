@@ -1,6 +1,6 @@
 package com.example.vebibeer_be.model.entities.BusCompany;
 
-import java.sql.Date;
+import java.time.LocalDate;
 import java.util.Set;
 
 import jakarta.persistence.CascadeType;
@@ -31,8 +31,8 @@ public class Route {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int route_id;
 
-    private Date route_startTime;
-    private Date route_endTime;
+    private LocalDate route_startTime;
+    private LocalDate route_endTime;
     private String policy;
     private String route_description;
     

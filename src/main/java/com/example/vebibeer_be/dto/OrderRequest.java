@@ -1,13 +1,5 @@
 package com.example.vebibeer_be.dto;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
-import com.example.vebibeer_be.model.entities.BusCompany.Ticket;
-import com.example.vebibeer_be.model.entities.Customer.Customer;
-
 public class OrderRequest {
     private int amount;
     private String orderInfo;

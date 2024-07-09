@@ -1,7 +1,7 @@
 package com.example.vebibeer_be.controller;
 
-import java.sql.Date;
-import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -89,15 +89,17 @@ public class RestVNPaymentController {
             double VAT = 0.1;
             int point = Integer.parseInt(totalPrice) / 1000;
             PaymentMethod paymentMethod = paymentMethodService.getById(4);
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-            java.sql.Date transaction_timeEdit = new Date(100000000);
-            try {
-                java.sql.Date date = (Date) sdf.parse(paymentTime);
-                transaction_timeEdit = new java.sql.Date(date.getTime());
-            } catch (Exception e) {
-                System.out.println("Error parsing date: " + e.getMessage());
-            }
-            Transaction transaction = new Transaction(paymentStatus, VAT, point, status, transaction_timeEdit, tickets,
+            // SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+            // java.sql.Date transaction_timeEdit = new Date(100000000);
+            // try {
+            //     java.sql.Date date = (Date) sdf.parse(paymentTime);
+            //     transaction_timeEdit = new java.sql.Date(date.getTime());
+            // } catch (Exception e) {
+            //     System.out.println("Error parsing date: " + e.getMessage());
+            // }
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+            LocalDate transaction_timeEdit = LocalDate.parse("20240723", formatter);
+            Transaction transaction = new Transaction(paymentStatus, VAT, point, status, LocalDate.now(), tickets,
                     customer, null, paymentMethod);
             transactionService.save(transaction);
         }

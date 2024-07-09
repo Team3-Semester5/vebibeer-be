@@ -7,11 +7,15 @@ import org.springframework.stereotype.Service;
 
 import com.example.vebibeer_be.model.entities.Transaction;
 import com.example.vebibeer_be.model.repo.TransactionRepo;
+import com.example.vebibeer_be.model.repo.CustomerRepo.CustomerRepo;
 
 @Service
 public class TransactionService {
     @Autowired
     TransactionRepo transactionRepo;
+
+    @Autowired 
+    CustomerRepo customerRepo;
 
     public List<Transaction> getAll(){
         return transactionRepo.findAll();
@@ -29,8 +33,8 @@ public class TransactionService {
         transactionRepo.deleteById(transaction_id);
     }
 
-    public List<Object[]> getTransactionInfoByCustomerId(int customerId) {
-        List<Object[]> transactions = transactionRepo.findTransactionInfoByCustomerId(customerId);
+    public List<Transaction> getTransactionInfoByCustomerId(int customerId) {
+        List<Transaction> transactions = transactionRepo.findByCustomer(customerRepo.getReferenceById(customerId));
         return transactions;
     }
 

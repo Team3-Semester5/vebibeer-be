@@ -65,8 +65,8 @@ public class RestTransactionController {
     }
 
     @GetMapping("/customer/{customerId}")
-    public ResponseEntity<List<Object[]>> getTransactionsByCustomerId(@PathVariable int customerId) {
-        List<Object[]> transactions = transactionService.getTransactionInfoByCustomerId(customerId);
+    public ResponseEntity<?> getTransactionsByCustomerId(@PathVariable int customerId) {
+        List<Transaction> transactions = transactionService.getTransactionInfoByCustomerId(customerId);
         return ResponseEntity.ok(transactions);
     }
 }
