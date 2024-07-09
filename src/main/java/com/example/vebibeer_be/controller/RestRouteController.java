@@ -1,6 +1,6 @@
 package com.example.vebibeer_be.controller;
 
-import java.time.LocalDate;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -65,7 +65,7 @@ public class RestRouteController {
     public ResponseEntity<List<Route>> getRoutesByCitiesAndDate(
             @RequestParam(value = "startCity", required = false) String startCity,
             @RequestParam(value = "endCity", required = false) String endCity,
-            @RequestParam(value = "date", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+            @RequestParam(value = "date", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Timestamp date) {
                 List<Route> routes = new ArrayList<>();
         if (startCity == null && endCity == null && date == null) {
             routes = routeService.getAll();

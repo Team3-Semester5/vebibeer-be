@@ -31,6 +31,10 @@ public class BusCompanyService {
         busCompanyRepo.deleteById(busCompany_id);
     }
 
+    public BusCompany findByUsername(String username){
+        return busCompanyRepo.findByUsername(username);
+    }
+
     @Transactional
     public BusCompany updateBusCompany(int id, BusCompany busCompanyDetails) {
         return busCompanyRepo.findById(id).map(existingBusCompany -> {

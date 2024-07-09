@@ -17,8 +17,11 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.security.oauth2.jwt.Jwt;
 
 import com.example.vebibeer_be.dto.PasswordChangeDTO;
+import com.example.vebibeer_be.model.entities.BusCompany.BusCompany;
 import com.example.vebibeer_be.model.entities.Customer.Customer;
+import com.example.vebibeer_be.model.service.BusCompanyService.BusCompanyService;
 import com.example.vebibeer_be.model.service.CustomerService.CustomerService;
+import com.example.vebibeer_be.payload.AuthBusResponse;
 import com.example.vebibeer_be.payload.AuthResponse;
 import com.example.vebibeer_be.payload.LoginRequest;
 import com.example.vebibeer_be.payload.SignUpRequest;
@@ -31,6 +34,9 @@ import jakarta.mail.MessagingException;
 public class JwtAuthenticationController {
     @Autowired
     private CustomerService customerService;
+
+    @Autowired
+    BusCompanyService busCompanyService = new BusCompanyService();
 
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -52,6 +58,18 @@ public class JwtAuthenticationController {
         Customer customer = customerService.findByUsername(loginRequest.getUsername()).orElse(new Customer());
         String token = tokenProvider.createToken(authentication);
         return ResponseEntity.ok(new AuthResponse(token, customer));
+    }
+
+    @PostMapping("/bus/authenticate")
+    public ResponseEntity<?> authenticateBus(@RequestBody LoginRequest loginRequest) {
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        loginRequest.getUsername(),
+                        loginRequest.getPassword()));
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        BusCompany busCompany = busCompanyService.findByUsername(loginRequest.getUsername());
+        String token = tokenProvider.createToken(authentication);
+        return ResponseEntity.ok(new AuthBusResponse(token, busCompany));
     }
 
     @PostMapping("/register")
@@ -80,7 +98,7 @@ public class JwtAuthenticationController {
     @GetMapping("/forgetPassword")
     public ResponseEntity<?> forgetPassword(@RequestParam("username") String username) {
         Optional<Customer> customer = customerService.findByUsername(username);
-        
+
         for (Customer oldCustomer : customerService.getAllCustomer()) {
             if (username.equals(oldCustomer.getUsername())) {
                 oldCustomer.setPassword(passwordEncoder.encode("hello1234"));

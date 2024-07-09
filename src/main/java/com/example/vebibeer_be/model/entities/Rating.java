@@ -1,6 +1,6 @@
 package com.example.vebibeer_be.model.entities;
 
-import java.time.LocalDate;
+import java.sql.Timestamp;
 
 import com.example.vebibeer_be.model.entities.BusCompany.BusCompany;
 import com.example.vebibeer_be.model.entities.Customer.Customer;
@@ -33,7 +33,7 @@ public class Rating {
 
     private int amount_star;
     private String rating_content;
-    private LocalDate rating_editTime;
+    private Timestamp rating_editTime;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "customer_id", referencedColumnName = "customer_id")

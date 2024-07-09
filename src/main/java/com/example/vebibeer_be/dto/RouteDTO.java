@@ -1,6 +1,6 @@
 package com.example.vebibeer_be.dto;
 
-import java.time.LocalDate;
+import java.sql.Timestamp;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,8 +14,8 @@ import lombok.ToString;
 @AllArgsConstructor
 @ToString
 public class RouteDTO {
-    private LocalDate route_startTime;
-    private LocalDate route_endTime;
+    private Timestamp route_startTime;
+    private Timestamp route_endTime;
     private String policy;
     private String route_description;
 

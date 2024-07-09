@@ -1,6 +1,6 @@
 package com.example.vebibeer_be.model.entities.Customer;
 
-import java.time.LocalDate;
+import java.sql.Timestamp;
 import java.util.Set;
 
 import com.example.vebibeer_be.model.entities.Transaction;
@@ -38,7 +38,7 @@ public class Customer extends User {
 
     private String customer_status;
     private String customer_fullname;
-    private LocalDate customer_dob;
+    private Timestamp customer_dob;
     private String customer_img_ava;
     private String customer_nationality;
     private String customer_gender;

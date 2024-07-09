@@ -1,6 +1,6 @@
 package com.example.vebibeer_be.model.entities;
 
-import java.time.LocalDate;
+import java.sql.Timestamp;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -23,7 +23,7 @@ public class Voucher {
     private String voucher_code;
 
     private double saleUp;
-    private LocalDate startTime;
-    private LocalDate endTime;
+    private Timestamp startTime;
+    private Timestamp endTime;
     private String voucher_condition;
 }

@@ -1,6 +1,8 @@
 package com.example.vebibeer_be.controller;
 
+import java.sql.Timestamp;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -45,6 +47,8 @@ public class RestVNPaymentController {
 
     @Autowired
     CustomerService customerService = new CustomerService();
+
+    
 
     @Autowired
     TicketService ticketService = new TicketService();
@@ -98,10 +102,11 @@ public class RestVNPaymentController {
             //     System.out.println("Error parsing date: " + e.getMessage());
             // }
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
-            LocalDate transaction_timeEdit = LocalDate.parse("20240723", formatter);
-            Transaction transaction = new Transaction(paymentStatus, VAT, point, status, LocalDate.now(), tickets,
+            LocalDateTime transaction_timeEdit = LocalDateTime.parse("20240723", formatter);
+            Transaction transaction = new Transaction(paymentStatus, VAT, point, status, Timestamp.valueOf(LocalDateTime.now()), tickets,
                     customer, null, paymentMethod);
             transactionService.save(transaction);
+
         }
         RedirectView redirectView = new RedirectView();
         redirectView.setUrl("http://localhost:3000/payment-result?status=" + status);

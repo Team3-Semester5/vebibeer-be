@@ -1,6 +1,6 @@
 package com.example.vebibeer_be.dto;
 
-import java.time.LocalDate;
+import java.sql.Timestamp;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -15,7 +15,7 @@ import lombok.ToString;
 @ToString
 public class RatingDTO {
     private String rating_content;
-    private LocalDate rating_editTime;
+    private Timestamp rating_editTime;
     private int amount_star;
     private String username;
     private int busCompany_id;
