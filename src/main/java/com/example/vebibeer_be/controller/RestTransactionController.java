@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.vebibeer_be.dto.TransactionDetailDTO;
 import com.example.vebibeer_be.model.entities.Transaction;
 import com.example.vebibeer_be.model.service.TransactionService;
 
@@ -66,7 +67,7 @@ public class RestTransactionController {
 
     @GetMapping("/customer/{customerId}")
     public ResponseEntity<?> getTransactionsByCustomerId(@PathVariable int customerId) {
-        List<Transaction> transactions = transactionService.getTransactionInfoByCustomerId(customerId);
+        List<TransactionDetailDTO> transactions = transactionService.getTransactionInfoByCustomerId(customerId);
         return ResponseEntity.ok(transactions);
     }
 }

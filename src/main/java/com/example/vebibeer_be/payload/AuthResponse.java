@@ -1,13 +1,14 @@
 package com.example.vebibeer_be.payload;
 
+import com.example.vebibeer_be.model.entities.User;
 import com.example.vebibeer_be.model.entities.Customer.Customer;
 
 public class AuthResponse {
     private String accessToken;
     private String tokenType = "Bearer";
-    private Customer customer;
+    private User customer;
 
-    public Customer getCustomer() {
+    public User getCustomer() {
         return customer;
     }
 
@@ -15,7 +16,7 @@ public class AuthResponse {
         this.customer = customer;
     }
 
-    public AuthResponse(String accessToken, Customer customer) {
+    public AuthResponse(String accessToken, User customer) {
         this.accessToken = accessToken;
         this.customer = customer;
     }

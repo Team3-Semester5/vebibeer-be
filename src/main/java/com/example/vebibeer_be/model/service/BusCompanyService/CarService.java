@@ -1,3 +1,4 @@
+
 package com.example.vebibeer_be.model.service.BusCompanyService;
 
 import java.util.List;
@@ -6,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.vebibeer_be.model.entities.BusCompany.Car;
+import com.example.vebibeer_be.model.repo.BusCompanyRepo.BusCompanyRepo;
 import com.example.vebibeer_be.model.repo.BusCompanyRepo.CarRepo;
 
 import java.util.Optional;
@@ -15,24 +17,27 @@ public class CarService {
     @Autowired
     CarRepo carRepo;
 
-    public List<Car> getAll(){
+    @Autowired
+    BusCompanyRepo busCompanyRepo;
+
+    public List<Car> getAll() {
         return carRepo.findAll();
     }
 
-    public Car getById(int carId){
+    public Car getById(int carId) {
         return carRepo.getReferenceById(carId);
     }
 
-    public void save(Car car){
+    public void save(Car car) {
         carRepo.save(car);
     }
 
-    public void delete(int carId){
+    public void delete(int carId) {
         carRepo.deleteById(carId);
     }
 
-     // Update an existing Car
-     public Car updateCar(int id, Car carDetails) {
+    // Update an existing Car
+    public Car updateCar(int id, Car carDetails) {
         Optional<Car> optionalCar = carRepo.findById(id);
         if (optionalCar != null) {
             Car existingCar = optionalCar.get();
@@ -52,4 +57,7 @@ public class CarService {
         }
     }
 
+    public List<Car> getCarsByBusCompanyId(int busCompanyId) {
+        return carRepo.findByBusCompanyId(busCompanyId);
+    }
 }

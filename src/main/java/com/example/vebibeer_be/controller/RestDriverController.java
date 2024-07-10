@@ -14,17 +14,22 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.vebibeer_be.dto.DriverDTO;
+import com.example.vebibeer_be.model.entities.BusCompany.BusCompany;
 import com.example.vebibeer_be.model.entities.BusCompany.Driver;
+import com.example.vebibeer_be.model.repo.BusCompanyRepo.BusCompanyRepo;
 import com.example.vebibeer_be.model.service.BusCompanyService.DriverService;
-
 
 @RestController
 @RequestMapping("/buscompany/driver")
 public class RestDriverController {
-     @Autowired
-    DriverService driverService = new DriverService();
+    @Autowired
+    DriverService driverService;
 
-    @GetMapping(value = {"", "/"})
+    @Autowired
+    BusCompanyRepo busCompanyRepo;
+
+    @GetMapping(value = { "", "/" })
     public ResponseEntity<List<Driver>> showList() {
         List<Driver> Drivers = driverService.getAll();
         if (Drivers.isEmpty()) {
@@ -32,18 +37,42 @@ public class RestDriverController {
         }
         return new ResponseEntity<List<Driver>>(Drivers, HttpStatus.OK);
     }
-    
-    @PostMapping(value = {"/save", "/save/"})
-    public ResponseEntity<Driver> save(@RequestBody Driver newDriver) {
-        if (newDriver == null) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+
+    // @GetMapping("/bycompany/{busCompanyId}")
+    // public ResponseEntity<List<Driver>> showList(@PathVariable int busCompanyId) {
+    //     List<Driver> drivers = driverService.getByBusCompanyId(busCompanyId);
+    //     if (drivers.isEmpty()) {
+    //         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    //     }
+    //     return new ResponseEntity<>(drivers, HttpStatus.OK);
+    // }
+
+    @PostMapping(value = { "/save", "/save/" })
+    public ResponseEntity<?> saveDriver(@RequestBody DriverDTO driverDTO) {
+        if (driverDTO == null) {
+            return new ResponseEntity<>("DriverDTO is null", HttpStatus.BAD_REQUEST);
         }
-        driverService.save(newDriver);
-        return new ResponseEntity<>(newDriver, HttpStatus.OK);
+
+        try {
+            Driver newDriver = new Driver(); // Convert DriverDTO to Driver entity
+            newDriver.setDriver_name(driverDTO.getDriver_name());
+            newDriver.setDriver_avaUrl(driverDTO.getDriver_avaUrl());
+            newDriver.setDriver_description(driverDTO.getDriver_description());
+
+            // Set BusCompany by ID
+            BusCompany busCompany = busCompanyRepo.findById(driverDTO.getBusCompany_id())
+                    .orElseThrow(() -> new RuntimeException("BusCompany not found"));
+            newDriver.setBusCompany(busCompany);
+
+            driverService.save(newDriver);
+            return new ResponseEntity<>(newDriver, HttpStatus.CREATED);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Failed to save driver: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
-    
-    @GetMapping(value = {"/{id}", "/{id}/"})
-    public ResponseEntity<Driver> getById(@PathVariable(name = "id")int driver_id) {
+
+    @GetMapping(value = { "/{id}", "/{id}/" })
+    public ResponseEntity<Driver> getById(@PathVariable(name = "id") int driver_id) {
         Driver Driver = driverService.getById(driver_id);
         if (Driver == null) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -51,8 +80,8 @@ public class RestDriverController {
         return new ResponseEntity<Driver>(Driver, HttpStatus.OK);
     }
 
-    @DeleteMapping(value = {"/delete/{id}", "/delete/{id}/"})
-    public ResponseEntity<Driver> delete(@PathVariable(name = "id") int driver_id){
+    @DeleteMapping(value = { "/delete/{id}", "/delete/{id}/" })
+    public ResponseEntity<Driver> delete(@PathVariable(name = "id") int driver_id) {
         Driver Driver = driverService.getById(driver_id);
         if (Driver == null) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -61,7 +90,7 @@ public class RestDriverController {
         return new ResponseEntity<Driver>(Driver, HttpStatus.OK);
     }
 
-    @PutMapping("/update/{id}" )
+    @PutMapping("/update/{id}")
     public ResponseEntity<Driver> updateDriver(@PathVariable(name = "id") int id, @RequestBody Driver driverDetails) {
         try {
             Driver updatedDriver = driverService.updateDriver(id, driverDetails);
@@ -71,4 +100,12 @@ public class RestDriverController {
         }
     }
 
+    @GetMapping("/by-company/{busCompanyId}")
+    public ResponseEntity<List<Driver>> listDriversByBusCompany(@PathVariable int busCompanyId) {
+        List<Driver> drivers = driverService.getByBusCompanyId(busCompanyId);
+        if (drivers.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(drivers, HttpStatus.OK);
+    }
 }

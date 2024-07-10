@@ -17,11 +17,11 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.security.oauth2.jwt.Jwt;
 
 import com.example.vebibeer_be.dto.PasswordChangeDTO;
+import com.example.vebibeer_be.model.entities.User;
 import com.example.vebibeer_be.model.entities.BusCompany.BusCompany;
 import com.example.vebibeer_be.model.entities.Customer.Customer;
 import com.example.vebibeer_be.model.service.BusCompanyService.BusCompanyService;
 import com.example.vebibeer_be.model.service.CustomerService.CustomerService;
-import com.example.vebibeer_be.payload.AuthBusResponse;
 import com.example.vebibeer_be.payload.AuthResponse;
 import com.example.vebibeer_be.payload.LoginRequest;
 import com.example.vebibeer_be.payload.SignUpRequest;
@@ -36,7 +36,7 @@ public class JwtAuthenticationController {
     private CustomerService customerService;
 
     @Autowired
-    BusCompanyService busCompanyService = new BusCompanyService();
+    private BusCompanyService busCompanyService;
 
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -55,22 +55,26 @@ public class JwtAuthenticationController {
                         loginRequest.getPassword()));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        Customer customer = customerService.findByUsername(loginRequest.getUsername()).orElse(new Customer());
+        User user = customerService.findByUsername(loginRequest.getUsername()).orElse(new Customer());
+        if (user.getUsername() == null) {
+            user = busCompanyService.findByUsername(loginRequest.getUsername());
+        }
         String token = tokenProvider.createToken(authentication);
-        return ResponseEntity.ok(new AuthResponse(token, customer));
+        return ResponseEntity.ok(new AuthResponse(token, user));
     }
 
-    @PostMapping("/bus/authenticate")
-    public ResponseEntity<?> authenticateBus(@RequestBody LoginRequest loginRequest) {
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        loginRequest.getUsername(),
-                        loginRequest.getPassword()));
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        BusCompany busCompany = busCompanyService.findByUsername(loginRequest.getUsername());
-        String token = tokenProvider.createToken(authentication);
-        return ResponseEntity.ok(new AuthBusResponse(token, busCompany));
-    }
+    // @PostMapping("/bus/authenticate")
+    // public ResponseEntity<?> authenticateBus(@RequestBody LoginRequest loginRequest) {
+    //     System.out.println(loginRequest.toString());
+    //     Authentication authentication = authenticationManager.authenticate(
+    //             new UsernamePasswordAuthenticationToken(
+    //                     loginRequest.getUsername(),
+    //                     loginRequest.getPassword()));
+    //     SecurityContextHolder.getContext().setAuthentication(authentication);
+    //     BusCompany busCompany = busCompanyService.findByUsername(loginRequest.getUsername());
+    //     String token = tokenProvider.createToken(authentication);
+    //     return ResponseEntity.ok(new AuthResponse(token, busCompany));
+    // }
 
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody SignUpRequest signUpRequest) {
@@ -97,7 +101,7 @@ public class JwtAuthenticationController {
 
     @GetMapping("/forgetPassword")
     public ResponseEntity<?> forgetPassword(@RequestParam("username") String username) {
-        Optional<Customer> customer = customerService.findByUsername(username);
+        // Optional<Customer> customer = customerService.findByUsername(username);
 
         for (Customer oldCustomer : customerService.getAllCustomer()) {
             if (username.equals(oldCustomer.getUsername())) {

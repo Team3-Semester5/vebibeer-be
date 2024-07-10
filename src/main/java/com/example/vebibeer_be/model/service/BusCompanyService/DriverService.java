@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.vebibeer_be.model.entities.BusCompany.Driver;
+
 import com.example.vebibeer_be.model.repo.BusCompanyRepo.DriverRepo;
 
 @Service
@@ -14,23 +15,28 @@ public class DriverService {
     @Autowired
     DriverRepo driverRepo;
 
-    public List<Driver> getAll(){
+    public DriverService(DriverRepo driverRepo) {
+        this.driverRepo = driverRepo;
+    }
+
+    public List<Driver> getAll() {
         return driverRepo.findAll();
     }
 
-    public Driver getById(int driver_id){
+    public Driver getById(int driver_id) {
         return driverRepo.getReferenceById(driver_id);
     }
 
-    public void save(Driver driver){
+    public void save(Driver driver) {
         driverRepo.save(driver);
     }
 
-    public void delete(int driver_id){
+    public void delete(int driver_id) {
         driverRepo.deleteById(driver_id);
     }
-     // Update an existing Driver
-     public Driver updateDriver(int id, Driver driverDetails) {
+
+    // Update an existing Driver
+    public Driver updateDriver(int id, Driver driverDetails) {
         Optional<Driver> optionalDriver = driverRepo.findById(id);
         if (optionalDriver.isPresent()) {
             Driver existingDriver = optionalDriver.get();
@@ -41,6 +47,10 @@ public class DriverService {
         } else {
             throw new RuntimeException("Driver not found with id " + id);
         }
+    }
+
+    public List<Driver> getByBusCompanyId(int busCompanyId) {
+        return driverRepo.findByBusCompanyId(busCompanyId);
     }
 
 }

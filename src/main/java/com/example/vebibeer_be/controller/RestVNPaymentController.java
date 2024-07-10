@@ -101,8 +101,8 @@ public class RestVNPaymentController {
             // } catch (Exception e) {
             //     System.out.println("Error parsing date: " + e.getMessage());
             // }
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
-            LocalDateTime transaction_timeEdit = LocalDateTime.parse("20240723", formatter);
+            // DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+            // LocalDateTime transaction_timeEdit = LocalDateTime.parse("20240723", formatter);
             Transaction transaction = new Transaction(paymentStatus, VAT, point, status, Timestamp.valueOf(LocalDateTime.now()), tickets,
                     customer, null, paymentMethod);
             transactionService.save(transaction);

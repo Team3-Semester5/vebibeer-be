@@ -5,8 +5,11 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
+import com.example.vebibeer_be.model.entities.User;
+import com.example.vebibeer_be.model.entities.BusCompany.BusCompany;
 import com.example.vebibeer_be.model.entities.Customer.Customer;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -26,19 +29,29 @@ public class UserPrincipal implements OAuth2User, UserDetails {
         this.authorities = authorities;
     }
 
-    public static UserPrincipal create(Customer user) {
-        List<GrantedAuthority> authorities = Collections.
-                singletonList(new SimpleGrantedAuthority("ROLE_USER"));
+    // public static UserPrincipal create(BusCompany user){
+    // List<GrantedAuthority> authorities = Collections.
+    // singletonList(new SimpleGrantedAuthority("ROLE_BUS"));
 
+    // return new UserPrincipal(
+    // user.getUserId(),
+    // user.getUsername(),
+    // user.getPassword(),
+    // authorities
+    // );
+    // }
+
+    public static UserPrincipal create(User user) {
+        List<GrantedAuthority> authorities = new ArrayList<>();
+        authorities = Collections.singletonList(new SimpleGrantedAuthority(user.getRole_user()));
         return new UserPrincipal(
                 user.getUserId(),
                 user.getUsername(),
                 user.getPassword(),
-                authorities
-        );
+                authorities);
     }
 
-    public static UserPrincipal create(Customer user, Map<String, Object> attributes) {
+    public static UserPrincipal create(User user, Map<String, Object> attributes) {
         UserPrincipal userPrincipal = UserPrincipal.create(user);
         userPrincipal.setAttributes(attributes);
         return userPrincipal;

@@ -1,5 +1,7 @@
 package com.example.vebibeer_be.model.service.BusCompanyService;
 
+import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,16 +27,16 @@ public class RouteService {
     RouteRepo routeRepo;
 
     @Autowired
-    TicketRepo ticketRepo;
-
-    @Autowired
     CarRepo carRepo;
 
     @Autowired
-    DriverRepo driverRepo;
+    TicketRepo ticketRepo;
 
     @Autowired
     BusCompanyRepo busCompanyRepo;
+
+    @Autowired
+    DriverRepo driverRepo;
 
     @Autowired
     LocationRepo locationRepo;
@@ -47,6 +49,62 @@ public class RouteService {
         return routeRepo.getReferenceById(route_id);
     }
 
+    public void save(Route route) {
+        routeRepo.save(route);
+    }
+
+    public void delete(int route_id) {
+        routeRepo.deleteById(route_id);
+    }
+
+    public List<Route> getRoutes(String startCity, String endCity, Timestamp date) {
+        return routeRepo.findRoutesByStartAndEndCityAndDate(startCity, endCity, date);
+    }
+
+    public List<Route> getRoutesByBusCompanyId(int busCompanyId) {
+        return routeRepo.findByBusCompanyId(busCompanyId);
+    }
+
+    public Route update(int route_id, RouteDTO updatedRoute) {
+        try {
+            Route route = routeRepo.findById(route_id)
+                    .orElseThrow(() -> new RuntimeException("Route not found with id " + route_id));
+
+            Car car = carRepo.getReferenceById(updatedRoute.getCar_id());
+
+            Location startLocation = locationRepo.getReferenceById(updatedRoute.getStartLocation_id());
+            Location endLocation = locationRepo.getReferenceById(updatedRoute.getEndLocation_id());
+            Driver driver = driverRepo.getReferenceById(updatedRoute.getDriver_id());
+            BusCompany busCompany = busCompanyRepo.getReferenceById(updatedRoute.getBusCompany_id());
+            route.setCar(car);
+            route.setDriver(driver);
+            route.setStartLocation(startLocation);
+            route.setEndLocation(endLocation);
+            route.setRoute_startTime(updatedRoute.getRoute_startTime());
+            route.setRoute_endTime(updatedRoute.getRoute_endTime());
+            route.setPolicy(updatedRoute.getPolicy());
+            route.setRoute_description(updatedRoute.getRoute_description());
+            route.setBusCompany(busCompany);
+            List<Ticket> tickets = new ArrayList<>();
+            int totalSeats = car.getAmount_seat();
+            for (int i = 0; i < 2; i++) {
+                for (int j = 0; j < totalSeats / 2; j++) {
+                    String ticketSeat = i == 0 ? "A" : "B";
+                    ticketSeat += j;
+                    int price = updatedRoute.getPriceTicket();
+                    Ticket ticket = new Ticket(0, price, ticketSeat, "Empty", route);
+                    tickets.add(ticket);
+                }
+            }
+            ticketRepo.saveAll(tickets);
+
+            return routeRepo.save(route);
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        return null;
+    }
+
     public void save(RouteDTO newRoute) {
         Car car = carRepo.getReferenceById(newRoute.getCar_id());
         BusCompany busCompany = busCompanyRepo.getReferenceById(newRoute.getBusCompany_id());
@@ -54,27 +112,16 @@ public class RouteService {
         Location endLocation = locationRepo.getReferenceById(newRoute.getEndLocation_id());
         Driver driver = driverRepo.getReferenceById(newRoute.getDriver_id());
         int amountSeat = car.getAmount_seat();
-        Route route = new Route(0, newRoute.getRoute_startTime(), newRoute.getRoute_endTime(), newRoute.getPolicy(), newRoute.getRoute_description(), busCompany, starLocation, endLocation, car, driver, null);
+        Route route = new Route(0, newRoute.getRoute_startTime(), newRoute.getRoute_endTime(), newRoute.getPolicy(),
+                newRoute.getRoute_description(), busCompany, starLocation, endLocation, car, driver, null);
         Route addRoute = routeRepo.save(route);
         for (int i = 0; i < 2; i++) {
-            for (int j = 0; j < amountSeat/2; j++) {
+            for (int j = 0; j < amountSeat / 2; j++) {
                 String ticketSeat = i == 0 ? "A" : "B";
                 ticketSeat += j;
                 int price = newRoute.getPriceTicket();
                 ticketRepo.save(new Ticket(0, price, ticketSeat, "Empty", addRoute));
             }
         }
-    }
-
-    // public void save(Route route){
-    //     routeRepo.save(route);
-    // }
-
-    public void delete(int route_id) {
-        routeRepo.deleteById(route_id);
-    }
-
-    public List<Route> getRoutes(String startCity, String endCity, String date) {
-        return routeRepo.findRoutesByStartAndEndCityAndDate(startCity, endCity, date);
     }
 }
