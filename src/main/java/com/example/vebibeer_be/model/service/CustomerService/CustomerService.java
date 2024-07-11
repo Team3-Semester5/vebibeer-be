@@ -63,7 +63,9 @@ public class CustomerService {
     private AuthenticationManager authenticationManager;
 
     public boolean register(SignUpRequest customerSignup) {
-        if (customerRepo.findByUsername(customerSignup.getUsername()) != null) {
+        String username = customerSignup.getUsername();
+        System.out.println(username);
+        if (customerRepo.findByUsername(username).orElse(null) != null) {
             throw new BadRequestException("Email address already in use.");
         }
         Customer user = new Customer();
@@ -71,6 +73,7 @@ public class CustomerService {
         user.setUsername(customerSignup.getUsername());
         user.setPassword(passwordEncoder.encode(customerSignup.getPassword()));
         user.setCustomer_status("not_confirmed");
+        user.setRole_user("ROLE_USER");
         customerRepo.save(user);
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(

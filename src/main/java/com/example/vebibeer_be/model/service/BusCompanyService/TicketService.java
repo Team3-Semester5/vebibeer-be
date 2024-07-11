@@ -29,17 +29,12 @@ public class TicketService {
         ticketRepo.deleteById(ticketId);
     }
 
-    public double getLowestTicketPrice() {
-        return ticketRepo.findAll().stream()
-                         .mapToDouble(Ticket::getTicket_price)
-                         .min()
-                         .orElse(0.0);
+    public double getLowestTicketPriceByRouteId(int routeId) {
+        return ticketRepo.findMinTicketPriceByRouteId(routeId).orElse(0.0);
     }
 
-    public double getHighestTicketPrice() {
-        return ticketRepo.findAll().stream()
-                         .mapToDouble(Ticket::getTicket_price)
-                         .max()
-                         .orElse(0.0);
+    public double getHighestTicketPriceByRouteId(int routeId) {
+        return ticketRepo.findMaxTicketPriceByRouteId(routeId).orElse(0.0);
     }
+
 }
