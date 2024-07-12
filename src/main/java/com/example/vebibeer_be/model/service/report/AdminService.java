@@ -1,5 +1,6 @@
 package com.example.vebibeer_be.model.service.report;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -43,36 +44,36 @@ public class AdminService {
         return topCustomers;
     }
 
-    public ArrayList<BusCompanyByTime> getAllInforBusCompanyByTime() {
+    public ArrayList<BusCompanyByTime> getAllInforBusCompanyByTime(int year) {
         String sql = "SELECT \n" + //
-                "    bc.bus_company_name,\n" + //
-                "    EXTRACT(YEAR FROM t.transaction_time_edit) AS year,\n" + //
-                "    EXTRACT(MONTH FROM t.transaction_time_edit) AS month,\n" + //
-                "    COUNT(tk.ticket_id) AS tickets_sold\n" + //
-                "FROM \n" + //
-                "    buscompany bc\n" + //
-                "JOIN \n" + //
-                "    route r ON bc.bus_company_id = r.bus_company_id\n" + //
-                "JOIN \n" + //
-                "    ticket tk ON r.route_id = tk.route_id\n" + //
-                "JOIN \n" + //
-                "    ticket_transaction tt ON tk.ticket_id = tt.ticket_id\n" + //
-                "JOIN \n" + //
-                "    transaction t ON tt.transaction_id = t.transaction_id\n" + //
-                "WHERE \n" + //
-                "    t.transaction_status = 'OrderSuccess'  -- Giả sử chỉ tính những giao dịch hoàn thành\n" + //
-                "GROUP BY \n" + //
-                "    bc.bus_company_name, year, month\n" + //
-                "ORDER BY \n" + //
-                "    bc.bus_company_name, year, month;";
-        List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+                        "    bc.bus_company_name,\n" + //
+                        "    EXTRACT(YEAR FROM t.transaction_time_edit) AS year,\n" + //
+                        "    COUNT(tk.ticket_id) AS tickets_sold,\n" + //
+                        "    SUM(tk.ticket_price) AS total_revenue\n" + //
+                        "FROM \n" + //
+                        "    buscompany bc\n" + //
+                        "JOIN \n" + //
+                        "    route r ON bc.bus_company_id = r.bus_company_id\n" + //
+                        "JOIN \n" + //
+                        "    ticket tk ON r.route_id = tk.route_id\n" + //
+                        "JOIN \n" + //
+                        "    ticket_transaction tt ON tk.ticket_id = tt.ticket_id\n" + //
+                        "JOIN \n" + //
+                        "    transaction t ON tt.transaction_id = t.transaction_id\n" + //
+                        "WHERE \n" + //
+                        "    t.transaction_status = 'OrderSuccess' and EXTRACT(YEAR FROM t.transaction_time_edit) = ? \n" + //
+                        "GROUP BY \n" + //
+                        "    bc.bus_company_name, year\n" + //
+                        "ORDER BY \n" + //
+                        "    bc.bus_company_name, year;";
+        List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql, year);
         ArrayList<BusCompanyByTime> busCompanyByTimeList = new ArrayList<>();
         for (Map<String, Object> map : rows) {
             String bus_company_name = (String) map.get("bus_company_name");
-            int year = (int) map.get("year");
-            int month = (int) map.get("month");
+            year = (int) map.get("year");
+            BigDecimal total_revenue = (BigDecimal) map.get("total_revenue");
             long tickets_sold = (long) map.get("tickets_sold");
-            busCompanyByTimeList.add(new BusCompanyByTime(bus_company_name, year, month, tickets_sold));
+            busCompanyByTimeList.add(new BusCompanyByTime(bus_company_name, year,  total_revenue, tickets_sold));
         }
         return busCompanyByTimeList;
     }

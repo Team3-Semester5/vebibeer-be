@@ -7,9 +7,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.vebibeer_be.model.entities.report.CustomerTransactionDetail;
 import com.example.vebibeer_be.model.entities.report.RevenueOfYear;
 import com.example.vebibeer_be.model.entities.report.TicketSalesInfo;
 import com.example.vebibeer_be.model.service.report.BusManageService;
+import com.example.vebibeer_be.model.service.report.CustomerTransactionService;
 import com.example.vebibeer_be.model.service.report.RevenueReportService;
 
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,6 +23,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class RestBusManageController {
     @Autowired
     BusManageService busManageService;
+
+    @Autowired
+    CustomerTransactionService customerTransactionService;
 
     // month
     @GetMapping("{idBus}")
@@ -42,6 +47,13 @@ public class RestBusManageController {
     public ResponseEntity<List<TicketSalesInfo>> getTopBusCompaniesByTicketSales(@RequestParam("year") int year) {
         List<TicketSalesInfo> ticketSalesInfos = busManageService.findTopBusCompaniesByTicketSales(year);
         return ResponseEntity.ok(ticketSalesInfos);
+    }
+
+    @GetMapping("{idBus}/get-infor-buscompany")
+    public ResponseEntity<List<CustomerTransactionDetail>> getCustomerTransactionDetails(
+            @PathVariable("idBus") int busCompanyId) {
+        List<CustomerTransactionDetail> transactions = customerTransactionService.findCustomerTransactions(busCompanyId);
+        return ResponseEntity.ok(transactions);
     }
 
     @Autowired
