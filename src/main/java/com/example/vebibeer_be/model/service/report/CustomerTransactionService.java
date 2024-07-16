@@ -11,7 +11,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.math.BigDecimal;
+
 
 @Service
 public class CustomerTransactionService {
@@ -19,25 +19,16 @@ public class CustomerTransactionService {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
+
     public List<CustomerTransactionDetail> findCustomerTransactions(int busCompanyId) {
         String sql = "SELECT " +
-                "c.customer_id, " +
-                "c.username, " +
-                "c.customer_fullname, " +
-                "c.customer_dob, " +
-                "c.customer_description, " +
-                "c.customer_gender, " +
-                "c.customer_nationality, " +
-                "t.transaction_status, " +
-                "t.transaction_time_edit, " +
-                "t.transaction_vat, " +
-                "pm.payment_method_name, " +
-                "tk.ticket_price, " +
-                "tk.ticket_seat, " +
-                "tk.ticket_status, " +
-                "r.route_start_time, " +
-                "r.route_end_time, " +
-                "bc.bus_company_name " +
+                "c.customer_id, c.username, c.customer_fullname, c.customer_dob, " +
+                "c.customer_description, c.customer_gender, c.customer_nationality, " +
+                "t.transaction_status, t.transaction_time_edit, t.transaction_vat, " +
+                "pm.payment_method_name, tk.ticket_price, tk.ticket_seat, tk.ticket_status, " +
+                "r.route_start_time, r.route_end_time, bc.bus_company_name " +
                 "FROM customer c " +
                 "JOIN transaction t ON c.customer_id = t.customer_id " +
                 "JOIN ticket_transaction tt ON t.transaction_id = tt.transaction_id " +
@@ -50,36 +41,25 @@ public class CustomerTransactionService {
 
         List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql, busCompanyId);
         List<CustomerTransactionDetail> transactions = new ArrayList<>();
-        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
         for (Map<String, Object> row : rows) {
-            LocalDate dob = row.get("customer_dob") == null ? null
-                    : LocalDate.parse(row.get("customer_dob").toString(), dateFormatter);
-            LocalDateTime timeEdit = parseDateTime(row.get("transaction_time_edit"), dateTimeFormatter);
-            LocalDateTime startTime = parseDateTime(row.get("route_start_time"), dateTimeFormatter);
-            LocalDateTime endTime = parseDateTime(row.get("route_end_time"), dateTimeFormatter);
-
-            Double transactionVAT = toDouble(row.get("transaction_vat"));
-            Double ticketPrice = toDouble(row.get("ticket_price"));
-
             CustomerTransactionDetail transaction = new CustomerTransactionDetail(
                     (Integer) row.get("customer_id"),
                     (String) row.get("username"),
                     (String) row.get("customer_fullname"),
-                    dob,
+                    (String)(row.get("customer_dob")),
                     (String) row.get("customer_description"),
                     (String) row.get("customer_gender"),
                     (String) row.get("customer_nationality"),
                     (String) row.get("transaction_status"),
-                    timeEdit,
-                    transactionVAT,
+                    parseLocalDateTime(row.get("transaction_time_edit")),
+                    toDouble(row.get("transaction_vat")),
                     (String) row.get("payment_method_name"),
-                    ticketPrice,
+                    toDouble(row.get("ticket_price")),
                     (String) row.get("ticket_seat"),
                     (String) row.get("ticket_status"),
-                    startTime,
-                    endTime,
+                    parseLocalDateTime(row.get("route_start_time")),
+                    parseLocalDateTime(row.get("route_end_time")),
                     (String) row.get("bus_company_name"));
             transactions.add(transaction);
         }
@@ -87,11 +67,22 @@ public class CustomerTransactionService {
         return transactions;
     }
 
-    private LocalDateTime parseDateTime(Object dateTimeObj, DateTimeFormatter formatter) {
+    private LocalDateTime parseLocalDateTime(Object dateTimeObj) {
         if (dateTimeObj == null)
             return null;
         try {
-            return LocalDateTime.parse(dateTimeObj.toString(), formatter);
+            return LocalDateTime.parse(dateTimeObj.toString(), DATE_TIME_FORMATTER);
+        } catch (Exception e) {
+            // Log error or handle it as necessary
+            return null;
+        }
+    }
+
+    private LocalDate parseLocalDate(Object dateObj) {
+        if (dateObj == null)
+            return null;
+        try {
+            return LocalDate.parse(dateObj.toString(), DATE_FORMATTER);
         } catch (Exception e) {
             // Log error or handle it as necessary
             return null;
@@ -99,13 +90,17 @@ public class CustomerTransactionService {
     }
 
     private Double toDouble(Object value) {
-        if (value instanceof Integer) {
-            return ((Integer) value).doubleValue();
-        } else if (value instanceof BigDecimal) {
-            return ((BigDecimal) value).doubleValue();
-        } else if (value instanceof Double) {
-            return (Double) value;
+        if (value == null)
+            return null;
+        if (value instanceof Number) {
+            return ((Number) value).doubleValue();
+        } else {
+            try {
+                return Double.parseDouble(value.toString());
+            } catch (NumberFormatException e) {
+                // Log or handle parse error
+                return null;
+            }
         }
-        return null; // or handle other types as needed
     }
 }

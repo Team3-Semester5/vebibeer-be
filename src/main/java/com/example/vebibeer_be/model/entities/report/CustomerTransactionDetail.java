@@ -17,7 +17,7 @@ public class CustomerTransactionDetail {
     private Integer customerId;
     private String username;
     private String customerFullName;
-    private LocalDate customerDOB; // Changed to LocalDate
+    private String customerDOB; // Changed to LocalDate
     private String customerDescription;
     private String customerGender;
     private String customerNationality;

@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -69,5 +70,12 @@ public class RestTransactionController {
     public ResponseEntity<?> getTransactionsByCustomerId(@PathVariable int customerId) {
         List<TransactionDetailDTO> transactions = transactionService.getTransactionInfoByCustomerId(customerId);
         return ResponseEntity.ok(transactions);
+    }
+
+    @PutMapping("/customer/cancel")
+    public ResponseEntity<?> cancelTransaction(@RequestBody TransactionDetailDTO transactionDetailDTO) {
+        System.out.println(transactionDetailDTO.toString());
+        Transaction transaction = transactionService.cancelTransaction(transactionDetailDTO);
+        return ResponseEntity.ok(transaction);
     }
 }

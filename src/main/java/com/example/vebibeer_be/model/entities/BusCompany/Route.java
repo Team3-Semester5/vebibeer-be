@@ -35,6 +35,7 @@ public class Route {
     private Timestamp route_endTime;
     private String policy;
     private String route_description;
+    private boolean isDaily;
     
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "busCompany_id", referencedColumnName = "busCompany_id")

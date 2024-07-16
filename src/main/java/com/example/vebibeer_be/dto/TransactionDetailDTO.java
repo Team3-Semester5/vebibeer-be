@@ -11,6 +11,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString
 public class TransactionDetailDTO {
+    private int transaction_id;
     private String startLocation;
     private String endLocation;
     private String busCompany;
@@ -24,6 +25,8 @@ public class TransactionDetailDTO {
     private String ticketSeats;
     private String routeStartTime;
     private String routeEndTime;
+    private int customer_id;
+    private String ticketIds;
 
     public TransactionDetailDTO(String startLocation, String endLocation, String busCompany, double totalTicketPrice,
                                 int totalTickets, String paymentMethod, String transactionStatus, String voucherCode,

@@ -5,7 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.vebibeer_be.dto.RouteDTO;
 import com.example.vebibeer_be.model.entities.BusCompany.BusCompany;
@@ -113,7 +115,8 @@ public class RouteService {
         Driver driver = driverRepo.getReferenceById(newRoute.getDriver_id());
         int amountSeat = car.getAmount_seat();
         Route route = new Route(0, newRoute.getRoute_startTime(), newRoute.getRoute_endTime(), newRoute.getPolicy(),
-                newRoute.getRoute_description(), busCompany, starLocation, endLocation, car, driver, null);
+                newRoute.getRoute_description(), newRoute.isDaily(), busCompany, starLocation, endLocation, car, driver,
+                null);
         Route addRoute = routeRepo.save(route);
         for (int i = 0; i < 2; i++) {
             for (int j = 0; j < amountSeat / 2; j++) {
@@ -121,6 +124,34 @@ public class RouteService {
                 ticketSeat += j;
                 int price = newRoute.getPriceTicket();
                 ticketRepo.save(new Ticket(0, price, ticketSeat, "Empty", addRoute));
+            }
+        }
+    }
+
+    @Scheduled(cron = "0 0 0 * * ?")
+    @Transactional
+    public void createRouteDaily() {
+        List<Route> routes = routeRepo.findAll();
+        for (Route route : routes) {
+            if (route.isDaily()) {
+                Timestamp startTime = new Timestamp(route.getRoute_startTime().getTime() + (24 * 60 * 60 * 1000));
+                Timestamp endTime = new Timestamp(route.getRoute_endTime().getTime() + (24 * 60 * 60 * 1000));
+                Route newRoute = new Route(0, startTime, endTime,
+                        route.getPolicy(),
+                        route.getRoute_description(), route.isDaily(), route.getBusCompany(), route.getStartLocation(),
+                        route.getEndLocation(), route.getCar(),
+                        route.getDriver(), null);
+                        
+                Route addRoute = routeRepo.save(newRoute);
+                System.out.println(addRoute.toString());
+                for (int i = 0; i < 2; i++) {
+                    for (int j = 0; j < route.getCar().getAmount_seat() / 2; j++) {
+                        String ticketSeat = i == 0 ? "A" : "B";
+                        ticketSeat += j;
+                        int price = 150;
+                        ticketRepo.save(new Ticket(0, price, ticketSeat, "Empty", addRoute));
+                    }
+                }
             }
         }
     }

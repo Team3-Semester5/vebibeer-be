@@ -26,6 +26,6 @@ public class RouteDTO {
 
     private int startLocation_id;
     private int endLocation_id;
-
+    private boolean isDaily;
     
 }
