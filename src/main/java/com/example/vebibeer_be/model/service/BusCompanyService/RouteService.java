@@ -108,6 +108,7 @@ public class RouteService {
     }
 
     public void save(RouteDTO newRoute) {
+        System.out.println(newRoute.toString());
         Car car = carRepo.getReferenceById(newRoute.getCar_id());
         BusCompany busCompany = busCompanyRepo.getReferenceById(newRoute.getBusCompany_id());
         Location starLocation = locationRepo.getReferenceById(newRoute.getStartLocation_id());
@@ -128,7 +129,7 @@ public class RouteService {
         }
     }
 
-    @Scheduled(cron = "0 0 0 * * ?")
+    @Scheduled(cron = "0 50 13 * * ?")
     @Transactional
     public void createRouteDaily() {
         List<Route> routes = routeRepo.findAll();
@@ -143,6 +144,8 @@ public class RouteService {
                         route.getDriver(), null);
                         
                 Route addRoute = routeRepo.save(newRoute);
+                route.setDaily(false);
+                routeRepo.save(route);
                 System.out.println(addRoute.toString());
                 for (int i = 0; i < 2; i++) {
                     for (int j = 0; j < route.getCar().getAmount_seat() / 2; j++) {

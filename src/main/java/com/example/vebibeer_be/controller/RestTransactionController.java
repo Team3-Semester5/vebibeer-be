@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.vebibeer_be.dto.OderDTO;
 import com.example.vebibeer_be.dto.TransactionDetailDTO;
 import com.example.vebibeer_be.model.entities.Transaction;
 import com.example.vebibeer_be.model.service.TransactionService;
@@ -24,7 +25,7 @@ public class RestTransactionController {
     @Autowired
     TransactionService transactionService = new TransactionService();
 
-    @GetMapping(value = {"", "/"})
+    @GetMapping(value = { "", "/" })
     public ResponseEntity<List<Transaction>> showList() {
         List<Transaction> Transactions = transactionService.getAll();
         if (Transactions.isEmpty()) {
@@ -32,8 +33,8 @@ public class RestTransactionController {
         }
         return new ResponseEntity<List<Transaction>>(Transactions, HttpStatus.OK);
     }
-    
-    @PostMapping(value = {"/save", "/save/"})
+
+    @PostMapping(value = { "/save", "/save/" })
     public ResponseEntity<Transaction> save(@RequestBody Transaction newTransaction) {
         if (newTransaction == null) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -46,9 +47,9 @@ public class RestTransactionController {
         transactionService.save(Transaction);
         return new ResponseEntity<>(HttpStatus.OK);
     }
-    
-    @GetMapping(value = {"/{id}", "/{id}/"})
-    public ResponseEntity<Transaction> getById(@PathVariable(name = "id")int Transaction_id) {
+
+    @GetMapping(value = { "/{id}", "/{id}/" })
+    public ResponseEntity<Transaction> getById(@PathVariable(name = "id") int Transaction_id) {
         Transaction Transaction = transactionService.getById(Transaction_id);
         if (Transaction == null) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -56,8 +57,8 @@ public class RestTransactionController {
         return new ResponseEntity<Transaction>(Transaction, HttpStatus.OK);
     }
 
-    @DeleteMapping(value = {"/delete/{id}", "/delete/{id}/"})
-    public ResponseEntity<Transaction> delete(@PathVariable(name = "id") int Transaction_id){
+    @DeleteMapping(value = { "/delete/{id}", "/delete/{id}/" })
+    public ResponseEntity<Transaction> delete(@PathVariable(name = "id") int Transaction_id) {
         Transaction Transaction = transactionService.getById(Transaction_id);
         if (Transaction == null) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -78,4 +79,21 @@ public class RestTransactionController {
         Transaction transaction = transactionService.cancelTransaction(transactionDetailDTO);
         return ResponseEntity.ok(transaction);
     }
+
+    @GetMapping("/buscompany/{busCompanyId}")
+    public ResponseEntity<List<OderDTO>> getTransactionsByBusCompanyId(
+            @PathVariable(name = "busCompanyId") int busCompanyId) {
+        List<OderDTO> transactions = transactionService.getTransactionsByBusCompanyId(busCompanyId);
+        if (transactions.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return ResponseEntity.ok(transactions);
+    }
+
+    @PutMapping("/customer/confirm")
+    public ResponseEntity<?> confirmCancel(@RequestBody OderDTO cancelOrder){
+        Transaction transaction = transactionService.confirmCancelOrder(cancelOrder);
+        return ResponseEntity.ok(transaction);
+    }
+
 }

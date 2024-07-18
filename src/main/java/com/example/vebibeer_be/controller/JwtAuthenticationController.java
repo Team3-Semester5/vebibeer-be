@@ -14,6 +14,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtDecoders;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.view.RedirectView;
 import org.springframework.security.oauth2.jwt.Jwt;
 
 import com.example.vebibeer_be.dto.PasswordChangeDTO;
@@ -64,16 +65,18 @@ public class JwtAuthenticationController {
     }
 
     // @PostMapping("/bus/authenticate")
-    // public ResponseEntity<?> authenticateBus(@RequestBody LoginRequest loginRequest) {
-    //     System.out.println(loginRequest.toString());
-    //     Authentication authentication = authenticationManager.authenticate(
-    //             new UsernamePasswordAuthenticationToken(
-    //                     loginRequest.getUsername(),
-    //                     loginRequest.getPassword()));
-    //     SecurityContextHolder.getContext().setAuthentication(authentication);
-    //     BusCompany busCompany = busCompanyService.findByUsername(loginRequest.getUsername());
-    //     String token = tokenProvider.createToken(authentication);
-    //     return ResponseEntity.ok(new AuthResponse(token, busCompany));
+    // public ResponseEntity<?> authenticateBus(@RequestBody LoginRequest
+    // loginRequest) {
+    // System.out.println(loginRequest.toString());
+    // Authentication authentication = authenticationManager.authenticate(
+    // new UsernamePasswordAuthenticationToken(
+    // loginRequest.getUsername(),
+    // loginRequest.getPassword()));
+    // SecurityContextHolder.getContext().setAuthentication(authentication);
+    // BusCompany busCompany =
+    // busCompanyService.findByUsername(loginRequest.getUsername());
+    // String token = tokenProvider.createToken(authentication);
+    // return ResponseEntity.ok(new AuthResponse(token, busCompany));
     // }
 
     @PostMapping("/register")
@@ -83,8 +86,9 @@ public class JwtAuthenticationController {
     }
 
     @GetMapping("/register/verify")
-    public ResponseEntity<?> verifyUser(@RequestParam("token") String token,
+    public RedirectView verifyUser(@RequestParam("token") String token,
             @RequestParam("username") String username) {
+        RedirectView redirectView = new RedirectView();
         if (tokenProvider.validateToken(token)) {
             Optional<Customer> customer = customerService.findByUsername(username);
             for (Customer oldCustomer : customerService.getAllCustomer()) {
@@ -94,15 +98,18 @@ public class JwtAuthenticationController {
                     customerService.saveCustomer(oldCustomer);
                 }
             }
-            return ResponseEntity.ok(customer);
+
+            redirectView.setUrl("http://localhost:3000/verify?status=success");
+            return redirectView;
         }
-        return new ResponseEntity<>(HttpStatus.GATEWAY_TIMEOUT);
+        redirectView.setUrl("http://localhost:3000/verify?status=fail");
+        return redirectView;
     }
 
     @GetMapping("/forgetPassword")
     public ResponseEntity<?> forgetPassword(@RequestParam("username") String username) {
         // Optional<Customer> customer = customerService.findByUsername(username);
-
+        String status = "fail";
         for (Customer oldCustomer : customerService.getAllCustomer()) {
             if (username.equals(oldCustomer.getUsername())) {
                 oldCustomer.setPassword(passwordEncoder.encode("hello1234"));
@@ -119,10 +126,10 @@ public class JwtAuthenticationController {
                 } catch (UnsupportedEncodingException | MessagingException e) {
                     e.printStackTrace();
                 }
-                return ResponseEntity.ok(new AuthResponse(token, oldCustomer));
+                return ResponseEntity.ok(token);
             }
         }
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        return ResponseEntity.badRequest().build();
     }
 
     @PostMapping("/changePassword")
