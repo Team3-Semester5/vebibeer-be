@@ -103,7 +103,7 @@ public class RestVNPaymentController {
             // }
             // DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
             // LocalDateTime transaction_timeEdit = LocalDateTime.parse("20240723", formatter);
-            Transaction transaction = new Transaction(0, VAT, point, status, Timestamp.valueOf(LocalDateTime.now()), tickets,
+            Transaction transaction = new Transaction(0, VAT, Integer.parseInt(totalPrice) / 100, status, Timestamp.valueOf(LocalDateTime.now()), tickets,
                     customer, null, paymentMethod);
             transactionService.save(transaction);
 

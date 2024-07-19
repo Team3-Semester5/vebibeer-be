@@ -108,7 +108,7 @@ public class TransactionService {
                     routeEndTime = ticket.getRoute().getRoute_endTime().toString();
                 }
             }
-
+            totalTicketPrice = transaction.getTransaction_point();
             TransactionDetailDTO detailDTO = new TransactionDetailDTO(
                     startLocation,
                     endLocation,
@@ -119,7 +119,7 @@ public class TransactionService {
                     transactionStatus,
                     voucherCode,
                     saleUp,
-                    points,
+                    100,
                     ticketSeats.toString(),
                     routeStartTime,
                     routeEndTime);
