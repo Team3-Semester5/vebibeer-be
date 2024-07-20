@@ -5,9 +5,7 @@ import org.springframework.stereotype.Repository;
 
 import com.example.vebibeer_be.model.entities.BusCompany.Location;
 
-
-
 @Repository
-public interface LocationRepo extends JpaRepository<Location, Integer> {
-
+public interface LocationRepo extends JpaRepository<Location, Integer>  {
+    
 }

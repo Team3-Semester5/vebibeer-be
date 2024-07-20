@@ -1,43 +1,44 @@
 package com.example.vebibeer_be.model.service.BusCompanyService;
 
-
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.example.vebibeer_be.model.entities.BusCompany.BusCompany;
 import com.example.vebibeer_be.model.repo.BusCompanyRepo.BusCompanyRepo;
 
-
+import jakarta.transaction.Transactional;
 
 @Service
 public class BusCompanyService {
-
     @Autowired
-    private BusCompanyRepo busCompanyRepo;
+    BusCompanyRepo busCompanyRepo;
 
-    // Create a new BusCompany
-    public BusCompany createBusCompany(BusCompany busCompany) {
-        return busCompanyRepo.save(busCompany);
-    }
-
-    // Retrieve all BusCompanies
-    public List<BusCompany> getAllBusCompanies() {
+    public List<BusCompany> getAll() {
         return busCompanyRepo.findAll();
     }
 
-    // Retrieve a BusCompany by ID
-    public Optional<BusCompany> getBusCompanyById(int id) {
-        return busCompanyRepo.findById(id);
+    public BusCompany getById(int busCompany_id) {
+        return busCompanyRepo.getReferenceById(busCompany_id);
     }
 
-    // Update an existing BusCompany
+    public void save(BusCompany busCompany) {
+        busCompanyRepo.save(busCompany);
+    }
+
+    public void delete(int busCompany_id) {
+        busCompanyRepo.deleteById(busCompany_id);
+    }
+
+    public BusCompany findByUsername(String username){
+        return busCompanyRepo.findByUsername(username);
+    }
+
     @Transactional
     public BusCompany updateBusCompany(int id, BusCompany busCompanyDetails) {
         return busCompanyRepo.findById(id).map(existingBusCompany -> {
+            existingBusCompany.setUserId(null);
             existingBusCompany.setUsername(busCompanyDetails.getUsername());
             existingBusCompany.setPassword(busCompanyDetails.getPassword());
             existingBusCompany.setBusCompany_status(busCompanyDetails.getBusCompany_status());
@@ -53,8 +54,4 @@ public class BusCompanyService {
         }).orElseThrow(() -> new RuntimeException("BusCompany not found with id " + id));
     }
 
-    // Delete a BusCompany by ID
-    public void deleteBusCompany(int id) {
-        busCompanyRepo.deleteById(id);
-    }
 }

@@ -1,57 +1,67 @@
 package com.example.vebibeer_be.controller;
 
-
-import com.example.vebibeer_be.model.entities.BusCompany.Service;
-import com.example.vebibeer_be.model.service.BusCompanyService.ServiceService;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-import java.util.Optional;
+import com.example.vebibeer_be.model.entities.BusCompany.Service;
+import com.example.vebibeer_be.model.service.BusCompanyService.ServicesService;
 
 @RestController
-@RequestMapping("/api/services")
+@RequestMapping("/admin/service")
 public class RestServiceController {
-
     @Autowired
-    private ServiceService serviceService;
+    ServicesService servicesService = new ServicesService();
 
-    @PostMapping("/")
-    public Service createService(@RequestBody Service service) {
-        return serviceService.createService(service);
-    }
-
-    @GetMapping("/")
-    public List<Service> getAllServices() {
-        return serviceService.getAllServices();
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<Service> getServiceById(@PathVariable int id) {
-        Optional<Service> service = serviceService.getServiceById(id);
-        if (service.isPresent()) {
-            return ResponseEntity.ok(service.get());
-        } else {
-            return ResponseEntity.notFound().build();
+     @GetMapping(value = {"", "/"})
+    public ResponseEntity<List<Service>> showList() {
+        List<Service> services = servicesService.getAll();
+        if (services.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
+        return new ResponseEntity<List<Service>>(services, HttpStatus.OK);
     }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<Service> updateService(@PathVariable int id, @RequestBody Service serviceDetails) {
-        try {
-            Service updatedService = serviceService.updateService(id, serviceDetails);
-            return ResponseEntity.ok(updatedService);
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
+    
+    @PostMapping(value = {"/save", "/save/"})
+    public ResponseEntity<Service> save(@RequestBody Service newService) {
+        if (newService == null) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
+        Service Service = servicesService.getById(newService.getService_id());
+        if (Service == null) {
+            servicesService.save(Service);
+            return new ResponseEntity<>(HttpStatus.CREATED);
+        }
+        servicesService.save(Service);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+    
+    @GetMapping(value = {"/{id}", "/{id}/"})
+    public ResponseEntity<Service> getById(@PathVariable(name = "id")int service_id) {
+        Service Service = servicesService.getById(service_id);
+        if (Service == null) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<Service>(Service, HttpStatus.OK);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteService(@PathVariable int id) {
-        serviceService.deleteService(id);
-        return ResponseEntity.noContent().build();
+    @DeleteMapping(value = {"/delete/{id}", "/delete/{id}/"})
+    public ResponseEntity<Service> delete(@PathVariable(name = "id") int service_id){
+        Service Service = servicesService.getById(service_id);
+        if (Service == null) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        servicesService.delete(service_id);
+        return new ResponseEntity<Service>(Service, HttpStatus.OK);
     }
+
 }
-

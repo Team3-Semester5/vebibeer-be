@@ -1,6 +1,5 @@
 package com.example.vebibeer_be.controller;
 
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,7 +23,7 @@ public class RestTicketController {
     @Autowired
     TicketService ticketService = new TicketService();
 
-    @GetMapping(value = {"", "/"})
+    @GetMapping(value = { "", "/" })
     public ResponseEntity<List<Ticket>> showList() {
         List<Ticket> Tickets = ticketService.getAll();
         if (Tickets.isEmpty()) {
@@ -33,7 +32,7 @@ public class RestTicketController {
         return new ResponseEntity<List<Ticket>>(Tickets, HttpStatus.OK);
     }
 
-    @GetMapping(value = {"/{idRoute}", "/{idRoute}/"})
+    @GetMapping(value = { "/{idRoute}", "/{idRoute}/" })
     public ResponseEntity<List<Ticket>> showListByRoute(@PathVariable(name = "idRoute") int idRoute) {
         List<Ticket> Tickets = new ArrayList<>();
         for (Ticket ticket : ticketService.getAll()) {
@@ -46,8 +45,8 @@ public class RestTicketController {
         }
         return new ResponseEntity<List<Ticket>>(Tickets, HttpStatus.OK);
     }
-    
-    @PostMapping(value = {"/save", "/save/"})
+
+    @PostMapping(value = { "/save", "/save/" })
     public ResponseEntity<Ticket> save(@RequestBody Ticket newTicket) {
         if (newTicket == null) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -60,11 +59,9 @@ public class RestTicketController {
         ticketService.save(Ticket);
         return new ResponseEntity<>(HttpStatus.OK);
     }
-    
 
-
-    @DeleteMapping(value = {"/delete/{id}", "/delete/{id}/"})
-    public ResponseEntity<Ticket> delete(@PathVariable(name = "id") int Ticket_id){
+    @DeleteMapping(value = { "/delete/{id}", "/delete/{id}/" })
+    public ResponseEntity<Ticket> delete(@PathVariable(name = "id") int Ticket_id) {
         Ticket Ticket = ticketService.getById(Ticket_id);
         if (Ticket == null) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -73,15 +70,15 @@ public class RestTicketController {
         return new ResponseEntity<Ticket>(Ticket, HttpStatus.OK);
     }
 
-    @GetMapping("/lowest-price")
-    public ResponseEntity<Double> getLowestTicketPrice() {
-        double lowestPrice = ticketService.getLowestTicketPrice();
+    @GetMapping("/lowest-price/{idRoute}/")
+    public ResponseEntity<Double> getLowestTicketPrice(@PathVariable(name = "idRoute") int idRoute) {
+        double lowestPrice = ticketService.getLowestTicketPriceByRouteId(idRoute);
         return new ResponseEntity<>(lowestPrice, HttpStatus.OK);
     }
 
-    @GetMapping("/highest-price")
-    public ResponseEntity<Double> getHighestTicketPrice() {
-        double highestPrice = ticketService.getHighestTicketPrice();
+    @GetMapping("/highest-price/{idRoute}/")
+    public ResponseEntity<Double> getHighestTicketPrice(@PathVariable(name = "idRoute") int idRoute) {
+        double highestPrice = ticketService.getHighestTicketPriceByRouteId(idRoute);
         return new ResponseEntity<>(highestPrice, HttpStatus.OK);
     }
 

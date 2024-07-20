@@ -23,7 +23,7 @@ public class RestLocationController {
     @Autowired
     private LocationService locationService;
 
-    @PostMapping("/")
+    @PostMapping("/save")
     public Location createLocation(@RequestBody Location location) {
         return locationService.createLocation(location);
     }
@@ -43,7 +43,7 @@ public class RestLocationController {
         }
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("update/{id}")
     public ResponseEntity<Location> updateLocation(@PathVariable int id, @RequestBody Location locationDetails) {
         try {
             Location updatedLocation = locationService.updateLocation(id, locationDetails);
@@ -53,10 +53,12 @@ public class RestLocationController {
         }
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("delete/{id}")
     public ResponseEntity<Void> deleteLocation(@PathVariable int id) {
         locationService.deleteLocation(id);
         return ResponseEntity.noContent().build();
     }
 
 }
+
+

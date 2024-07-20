@@ -16,8 +16,8 @@ import lombok.ToString;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @ToString
 @Entity
 @Table(name = "car")
@@ -39,4 +39,5 @@ public class Car {
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "busCompany_id", referencedColumnName = "busCompany_id")
     private BusCompany busCompany;
+
 }

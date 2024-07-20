@@ -22,7 +22,7 @@ public class RestPaymentMethodController {
     @Autowired
     PaymentMethodService paymentMethodService = new PaymentMethodService();
 
-    @GetMapping(value = { "", "/" })
+    @GetMapping(value = {"", "/"})
     public ResponseEntity<List<PaymentMethod>> showList() {
         List<PaymentMethod> PaymentMethods = paymentMethodService.getAll();
         if (PaymentMethods.isEmpty()) {
@@ -30,8 +30,8 @@ public class RestPaymentMethodController {
         }
         return new ResponseEntity<List<PaymentMethod>>(PaymentMethods, HttpStatus.OK);
     }
-
-    @PostMapping(value = { "/save", "/save/" })
+    
+    @PostMapping(value = {"/save", "/save/"})
     public ResponseEntity<PaymentMethod> save(@RequestBody PaymentMethod newPaymentMethod) {
         if (newPaymentMethod == null) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -44,9 +44,9 @@ public class RestPaymentMethodController {
         paymentMethodService.save(PaymentMethod);
         return new ResponseEntity<>(HttpStatus.OK);
     }
-
-    @GetMapping(value = { "/{id}", "/{id}/" })
-    public ResponseEntity<PaymentMethod> getById(@PathVariable(name = "id") int PaymentMethod_id) {
+    
+    @GetMapping(value = {"/{id}", "/{id}/"})
+    public ResponseEntity<PaymentMethod> getById(@PathVariable(name = "id")int PaymentMethod_id) {
         PaymentMethod PaymentMethod = paymentMethodService.getById(PaymentMethod_id);
         if (PaymentMethod == null) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -54,8 +54,8 @@ public class RestPaymentMethodController {
         return new ResponseEntity<PaymentMethod>(PaymentMethod, HttpStatus.OK);
     }
 
-    @DeleteMapping(value = { "/delete/{id}", "/delete/{id}/" })
-    public ResponseEntity<PaymentMethod> delete(@PathVariable(name = "id") int PaymentMethod_id) {
+    @DeleteMapping(value = {"/delete/{id}", "/delete/{id}/"})
+    public ResponseEntity<PaymentMethod> delete(@PathVariable(name = "id") int PaymentMethod_id){
         PaymentMethod PaymentMethod = paymentMethodService.getById(PaymentMethod_id);
         if (PaymentMethod == null) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);

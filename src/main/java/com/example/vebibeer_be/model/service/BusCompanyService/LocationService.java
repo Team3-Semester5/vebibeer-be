@@ -1,18 +1,21 @@
 package com.example.vebibeer_be.model.service.BusCompanyService;
 
-import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import com.example.vebibeer_be.model.entities.BusCompany.Location;
 import com.example.vebibeer_be.model.repo.BusCompanyRepo.LocationRepo;
+
+import java.util.List;
+import java.util.Optional;
+
+
+
 
 
 @Service
 public class LocationService {
-    @Autowired
+     @Autowired
     private LocationRepo locationRepo;
 
     // Create a new Location

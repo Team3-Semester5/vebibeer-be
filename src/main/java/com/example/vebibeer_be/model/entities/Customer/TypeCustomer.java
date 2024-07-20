@@ -3,6 +3,7 @@ package com.example.vebibeer_be.model.entities.Customer;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -32,7 +33,6 @@ public class TypeCustomer {
     private String typeCustomer_name;
     private String typeCustomer_description;
 
-    
     @OneToMany(mappedBy = "typeCustomer", fetch = FetchType.EAGER)
     @JsonBackReference
     private Set<Customer> customers;

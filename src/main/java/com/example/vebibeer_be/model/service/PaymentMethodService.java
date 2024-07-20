@@ -13,19 +13,19 @@ public class PaymentMethodService {
     @Autowired
     PaymentMethodRepo paymentMethodRepo;
 
-    public List<PaymentMethod> getAll() {
+    public List<PaymentMethod> getAll(){
         return paymentMethodRepo.findAll();
     }
 
-    public PaymentMethod getById(int paymentMethod_id) {
+    public PaymentMethod getById(int paymentMethod_id){
         return paymentMethodRepo.getReferenceById(paymentMethod_id);
     }
 
-    public void save(PaymentMethod paymentMethod) {
+    public void save(PaymentMethod paymentMethod){
         paymentMethodRepo.save(paymentMethod);
     }
 
-    public void delete(int paymentMethod_id) {
+    public void delete(int paymentMethod_id){
         paymentMethodRepo.deleteById(paymentMethod_id);
     }
 

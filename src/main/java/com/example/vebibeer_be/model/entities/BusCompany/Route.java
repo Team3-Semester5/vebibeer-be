@@ -1,6 +1,6 @@
 package com.example.vebibeer_be.model.entities.BusCompany;
 
-import java.util.Date;
+import java.sql.Timestamp;
 import java.util.Set;
 
 import jakarta.persistence.CascadeType;
@@ -12,7 +12,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
-
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -32,10 +31,11 @@ public class Route {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int route_id;
 
-    private Date route_startTime;
-    private Date route_endTime;
+    private Timestamp route_startTime;
+    private Timestamp route_endTime;
     private String policy;
     private String route_description;
+    private boolean isDaily;
     
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "busCompany_id", referencedColumnName = "busCompany_id")

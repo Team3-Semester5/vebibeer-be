@@ -1,41 +1,45 @@
+
 package com.example.vebibeer_be.model.service.BusCompanyService;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.vebibeer_be.model.entities.BusCompany.Car;
+import com.example.vebibeer_be.model.repo.BusCompanyRepo.BusCompanyRepo;
 import com.example.vebibeer_be.model.repo.BusCompanyRepo.CarRepo;
 
-
+import java.util.Optional;
 
 @Service
 public class CarService {
+    @Autowired
+    CarRepo carRepo;
 
     @Autowired
-    private CarRepo carRepo;
+    BusCompanyRepo busCompanyRepo;
 
-    // Create a new Car
-    public Car createCar(Car car) {
-        return carRepo.save(car);
-    }
-
-    // Retrieve all Cars
-    public List<Car> getAllCars() {
+    public List<Car> getAll() {
         return carRepo.findAll();
     }
 
-    // Retrieve a Car by ID
-    public Optional<Car> getCarById(int id) {
-        return carRepo.findById(id);
+    public Car getById(int carId) {
+        return carRepo.getReferenceById(carId);
+    }
+
+    public void save(Car car) {
+        carRepo.save(car);
+    }
+
+    public void delete(int carId) {
+        carRepo.deleteById(carId);
     }
 
     // Update an existing Car
     public Car updateCar(int id, Car carDetails) {
         Optional<Car> optionalCar = carRepo.findById(id);
-        if (optionalCar.isPresent()) {
+        if (optionalCar != null) {
             Car existingCar = optionalCar.get();
             existingCar.setCar_code(carDetails.getCar_code());
             existingCar.setAmount_seat(carDetails.getAmount_seat());
@@ -53,8 +57,7 @@ public class CarService {
         }
     }
 
-    // Delete a Car by ID
-    public void deleteCar(int id) {
-        carRepo.deleteById(id);
+    public List<Car> getCarsByBusCompanyId(int busCompanyId) {
+        return carRepo.findByBusCompanyId(busCompanyId);
     }
 }

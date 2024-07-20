@@ -7,5 +7,5 @@ import com.example.vebibeer_be.model.entities.BusCompany.BusCompany;
 
 @Repository
 public interface BusCompanyRepo extends JpaRepository<BusCompany, Integer> {
-    
+    BusCompany findByUsername(String username);
 }

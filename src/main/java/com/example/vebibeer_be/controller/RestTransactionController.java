@@ -9,10 +9,13 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.vebibeer_be.dto.OderDTO;
+import com.example.vebibeer_be.dto.TransactionDetailDTO;
 import com.example.vebibeer_be.model.entities.Transaction;
 import com.example.vebibeer_be.model.service.TransactionService;
 
@@ -63,4 +66,34 @@ public class RestTransactionController {
         transactionService.delete(Transaction_id);
         return new ResponseEntity<Transaction>(Transaction, HttpStatus.OK);
     }
+
+    @GetMapping("/customer/{customerId}")
+    public ResponseEntity<?> getTransactionsByCustomerId(@PathVariable int customerId) {
+        List<TransactionDetailDTO> transactions = transactionService.getTransactionInfoByCustomerId(customerId);
+        return ResponseEntity.ok(transactions);
+    }
+
+    @PutMapping("/customer/cancel")
+    public ResponseEntity<?> cancelTransaction(@RequestBody TransactionDetailDTO transactionDetailDTO) {
+        System.out.println(transactionDetailDTO.toString());
+        Transaction transaction = transactionService.cancelTransaction(transactionDetailDTO);
+        return ResponseEntity.ok(transaction);
+    }
+
+    @GetMapping("/buscompany/{busCompanyId}")
+    public ResponseEntity<List<OderDTO>> getTransactionsByBusCompanyId(
+            @PathVariable(name = "busCompanyId") int busCompanyId) {
+        List<OderDTO> transactions = transactionService.getTransactionsByBusCompanyId(busCompanyId);
+        if (transactions.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return ResponseEntity.ok(transactions);
+    }
+
+    @PutMapping("/customer/confirm")
+    public ResponseEntity<?> confirmCancel(@RequestBody OderDTO cancelOrder){
+        Transaction transaction = transactionService.confirmCancelOrder(cancelOrder);
+        return ResponseEntity.ok(transaction);
+    }
+
 }

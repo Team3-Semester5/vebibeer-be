@@ -1,6 +1,6 @@
 package com.example.vebibeer_be.model.entities;
 
-import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.Set;
 
 import com.example.vebibeer_be.model.entities.BusCompany.Ticket;
@@ -38,7 +38,7 @@ public class Transaction {
     private double transaction_vat;
     private int transaction_point;
     private String transaction_status;
-    private Date transaction_timeEdit;
+    private Timestamp transaction_timeEdit;
 
     @ManyToMany
     @JoinTable(name = "ticket_transaction", joinColumns = @JoinColumn(name = "transaction_id"), inverseJoinColumns = @JoinColumn(name = "ticket_id"))

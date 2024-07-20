@@ -1,66 +1,61 @@
 package com.example.vebibeer_be.controller;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.web.bind.annotation.*;
 import com.example.vebibeer_be.model.entities.Voucher;
 import com.example.vebibeer_be.model.service.VoucherService;
+import java.util.List;
 
 @RestController
-@RequestMapping("/voucher")
+@RequestMapping("/buscompany/voucher")
 public class RestVoucherController {
     @Autowired
-    VoucherService voucherService = new VoucherService();
+    private VoucherService voucherService;
 
-    @GetMapping(value = { "", "/" })
+    @GetMapping ({"" ,"/"})
     public ResponseEntity<List<Voucher>> showList() {
-        List<Voucher> Vouchers = voucherService.getAll();
-        if (Vouchers.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
-        return new ResponseEntity<List<Voucher>>(Vouchers, HttpStatus.OK);
+        List<Voucher> vouchers = voucherService.getAll();
+        return vouchers.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(vouchers);
     }
 
-    @PostMapping(value = { "/save", "/save/" })
+    @PostMapping("/save")
     public ResponseEntity<Voucher> save(@RequestBody Voucher newVoucher) {
         if (newVoucher == null) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        Voucher Voucher = voucherService.getById(newVoucher.getVoucher_code());
-        if (Voucher == null) {
-            voucherService.save(Voucher);
-            return new ResponseEntity<>(HttpStatus.CREATED);
-        }
-        voucherService.save(Voucher);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return ResponseEntity.status(HttpStatus.CREATED).body(voucherService.save(newVoucher));
     }
 
-    @GetMapping(value = { "/{id}", "/{id}/" })
-    public ResponseEntity<Voucher> getById(@PathVariable(name = "id") String Voucher_code) {
-        Voucher Voucher = voucherService.getById(Voucher_code);
-        if (Voucher == null) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    @PutMapping("/{voucherCode}")
+    public ResponseEntity<Voucher> updateVoucher(@PathVariable String voucherCode, @RequestBody Voucher updatedVoucher) {
+        try {
+            Voucher savedVoucher = voucherService.update(voucherCode, updatedVoucher);
+            return ResponseEntity.ok(savedVoucher);
+        } catch (RuntimeException ex) {
+            return ResponseEntity.notFound().build();
         }
-        return new ResponseEntity<Voucher>(Voucher, HttpStatus.OK);
     }
 
-    @DeleteMapping(value = { "/delete/{id}", "/delete/{id}/" })
-    public ResponseEntity<Voucher> delete(@PathVariable(name = "id") String Voucher_code) {
-        Voucher Voucher = voucherService.getById(Voucher_code);
-        if (Voucher == null) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getById(@PathVariable String id) {
+        Voucher voucher = voucherService.getById(id);
+        return voucher != null ? ResponseEntity.ok(voucher) : ResponseEntity.notFound().build();
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<Void> delete(@PathVariable String id) {
+        if (voucherService.getById(id) != null) {
+            voucherService.delete(id);
+            return ResponseEntity.ok().build();
         }
-        voucherService.delete(Voucher_code);
-        return new ResponseEntity<Voucher>(Voucher, HttpStatus.OK);
+        return ResponseEntity.notFound().build();
+    }
+
+    @GetMapping("/bus/{busCompanyId}")
+    public ResponseEntity<List<Voucher>> getByBusCompanyId(@PathVariable int busCompanyId) {
+        List<Voucher> vouchers = voucherService.getByBusCompanyId(busCompanyId);
+        return vouchers.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(vouchers);
     }
 }

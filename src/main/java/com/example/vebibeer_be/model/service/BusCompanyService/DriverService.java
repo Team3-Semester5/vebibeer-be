@@ -7,29 +7,32 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.vebibeer_be.model.entities.BusCompany.Driver;
+
 import com.example.vebibeer_be.model.repo.BusCompanyRepo.DriverRepo;
-
-
-
 
 @Service
 public class DriverService {
     @Autowired
-    private DriverRepo driverRepo;
+    DriverRepo driverRepo;
 
-    // Create a new Driver
-    public Driver createDriver(Driver driver) {
-        return driverRepo.save(driver);
+    public DriverService(DriverRepo driverRepo) {
+        this.driverRepo = driverRepo;
     }
 
-    // Retrieve all Drivers
-    public List<Driver> getAllDrivers() {
+    public List<Driver> getAll() {
         return driverRepo.findAll();
     }
 
-    // Retrieve a Driver by ID
-    public Optional<Driver> getDriverById(int id) {
-        return driverRepo.findById(id);
+    public Driver getById(int driver_id) {
+        return driverRepo.getReferenceById(driver_id);
+    }
+
+    public void save(Driver driver) {
+        driverRepo.save(driver);
+    }
+
+    public void delete(int driver_id) {
+        driverRepo.deleteById(driver_id);
     }
 
     // Update an existing Driver
@@ -46,8 +49,8 @@ public class DriverService {
         }
     }
 
-    // Delete a Driver by ID
-    public void deleteDriver(int id) {
-        driverRepo.deleteById(id);
+    public List<Driver> getByBusCompanyId(int busCompanyId) {
+        return driverRepo.findByBusCompanyId(busCompanyId);
     }
+
 }
