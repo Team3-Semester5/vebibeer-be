@@ -142,7 +142,7 @@ public class RouteService {
                         route.getRoute_description(), route.isDaily(), route.getBusCompany(), route.getStartLocation(),
                         route.getEndLocation(), route.getCar(),
                         route.getDriver(), null);
-                        
+
                 Route addRoute = routeRepo.save(newRoute);
                 route.setDaily(false);
                 routeRepo.save(route);

@@ -1,5 +1,8 @@
 package com.example.vebibeer_be.model.entities.BusCompany;
 
+
+import java.util.List;
+import java.util.ArrayList;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -7,6 +10,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -35,7 +39,7 @@ public class Car {
     private String car_imgUrl5;
     private String car_imgUrl6;
     private String car_manufacturer;
-    
+
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "busCompany_id", referencedColumnName = "busCompany_id")
     private BusCompany busCompany;
