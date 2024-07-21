@@ -90,6 +90,7 @@ public class RestDriverController {
         return new ResponseEntity<Driver>(Driver, HttpStatus.OK);
     }
 
+    
     @PutMapping("/update/{id}")
     public ResponseEntity<Driver> updateDriver(@PathVariable(name = "id") int id, @RequestBody Driver driverDetails) {
         try {

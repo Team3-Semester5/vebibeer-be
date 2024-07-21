@@ -52,5 +52,11 @@ public class DriverService {
     public List<Driver> getByBusCompanyId(int busCompanyId) {
         return driverRepo.findByBusCompanyId(busCompanyId);
     }
-
+    public void deleteDriver(int driverId) {
+        if (driverRepo.existsById(driverId)) {
+            driverRepo.deleteById(driverId);
+        } else {
+            throw new RuntimeException("Driver not found with id: " + driverId);
+        }
+    }
 }
