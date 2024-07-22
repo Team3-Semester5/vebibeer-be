@@ -3,6 +3,8 @@ package com.example.vebibeer_be.model.entities.BusCompany;
 import java.sql.Timestamp;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -26,6 +28,7 @@ import lombok.ToString;
 @ToString
 @Entity
 @Table(name = "route")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Route {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

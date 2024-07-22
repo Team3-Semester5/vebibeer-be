@@ -129,7 +129,7 @@ public class RouteService {
         }
     }
 
-    @Scheduled(cron = "0 43 21 * * ?")
+    @Scheduled(cron = "0 24 23 * * ?")
     @Transactional
     public void createRouteDaily() {
         List<Route> routes = routeRepo.findAll();

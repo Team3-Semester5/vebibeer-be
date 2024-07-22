@@ -1,5 +1,7 @@
 package com.example.vebibeer_be.model.entities.BusCompany;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -21,6 +23,8 @@ import lombok.ToString;
 @ToString
 @Entity
 @Table(name = "driver")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+
 public class Driver {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
