@@ -29,8 +29,8 @@ public class TransactionDetailDTO {
     private String ticketIds;
 
     public TransactionDetailDTO(String startLocation, String endLocation, String busCompany, double totalTicketPrice,
-                                int totalTickets, String paymentMethod, String transactionStatus, String voucherCode,
-                                double saleUp, int points, String ticketSeats, String routeStartTime, String routeEndTime) {
+            int totalTickets, String paymentMethod, String transactionStatus, String voucherCode,
+            double saleUp, int points, String ticketSeats, String routeStartTime, String routeEndTime) {
         this.startLocation = startLocation;
         this.endLocation = endLocation;
         this.busCompany = busCompany;

@@ -38,43 +38,44 @@ public interface TransactionRepo extends JpaRepository<Transaction, Integer> {
     List<Transaction> findByCustomer(Customer customer);
 
     @Query(value = "SELECT\n" + //
-                "    t.transaction_id,\n" + //
-                "    t.transaction_status,\n" + //
-                "    t.transaction_time_edit,\n" + //
-                "    cust.customer_id,\n" + //
-                "    cust.username,\n" + //
-                "    cust.customer_fullname,\n" + //
-                "    t.payment_method_id,\n" + //
-                "    pm.payment_method_name,\n" + //
-                "    GROUP_CONCAT(tk.ticket_id ORDER BY tk.ticket_id) AS tickets,\n" + //
-                "    SUM(tk.ticket_price) AS prices,\n" + //
-                "    GROUP_CONCAT(tk.ticket_seat ORDER BY tk.ticket_id) AS seats,\n" + //
-                "    ca.car_id,\n" + //
-                "    ca.car_code,\n" + //
-                "    b.bus_company_id\n" + //
-                "FROM\n" + //
-                "    transaction t\n" + //
-                "JOIN\n" + //
-                "    customer cust ON t.customer_id = cust.customer_id\n" + //
-                "JOIN \n" + //
-                "    payment_method pm ON t.payment_method_id = pm.payment_method_id\n" + //
-                "JOIN\n" + //
-                "    ticket_transaction tt ON t.transaction_id = tt.transaction_id\n" + //
-                "JOIN\n" + //
-                "    ticket tk ON tt.ticket_id = tk.ticket_id\n" + //
-                "JOIN\n" + //
-                "    route r ON tk.route_id = r.route_id\n" + //
-                "JOIN \n" + //
-                "    car ca ON r.car_id = ca.car_id\n" + //
-                "JOIN\n" + //
-                "    buscompany b ON r.bus_company_id = b.bus_company_id\n" + //
-                "WHERE\n" + //
-                "    b.bus_company_id = :busCompanyId\n" + //
-                "GROUP BY\n" + //
-                "    t.transaction_id, t.transaction_status, t.transaction_time_edit, cust.customer_id, cust.username, cust.customer_fullname,\n" + //
-                "    t.payment_method_id, pm.payment_method_name, ca.car_id, ca.car_code, b.bus_company_id\n" + //
-                "ORDER BY\n" + //
-                "    t.transaction_id;", nativeQuery = true)
+            "    t.transaction_id,\n" + //
+            "    t.transaction_status,\n" + //
+            "    t.transaction_time_edit,\n" + //
+            "    cust.customer_id,\n" + //
+            "    cust.username,\n" + //
+            "    cust.customer_fullname,\n" + //
+            "    t.payment_method_id,\n" + //
+            "    pm.payment_method_name,\n" + //
+            "    GROUP_CONCAT(tk.ticket_id ORDER BY tk.ticket_id) AS tickets,\n" + //
+            "    SUM(tk.ticket_price) AS prices,\n" + //
+            "    GROUP_CONCAT(tk.ticket_seat ORDER BY tk.ticket_id) AS seats,\n" + //
+            "    ca.car_id,\n" + //
+            "    ca.car_code,\n" + //
+            "    b.bus_company_id\n" + //
+            "FROM\n" + //
+            "    transaction t\n" + //
+            "JOIN\n" + //
+            "    customer cust ON t.customer_id = cust.customer_id\n" + //
+            "JOIN \n" + //
+            "    payment_method pm ON t.payment_method_id = pm.payment_method_id\n" + //
+            "JOIN\n" + //
+            "    ticket_transaction tt ON t.transaction_id = tt.transaction_id\n" + //
+            "JOIN\n" + //
+            "    ticket tk ON tt.ticket_id = tk.ticket_id\n" + //
+            "JOIN\n" + //
+            "    route r ON tk.route_id = r.route_id\n" + //
+            "JOIN \n" + //
+            "    car ca ON r.car_id = ca.car_id\n" + //
+            "JOIN\n" + //
+            "    buscompany b ON r.bus_company_id = b.bus_company_id\n" + //
+            "WHERE\n" + //
+            "    b.bus_company_id = :busCompanyId\n" + //
+            "GROUP BY\n" + //
+            "    t.transaction_id, t.transaction_status, t.transaction_time_edit, cust.customer_id, cust.username, cust.customer_fullname,\n"
+            + //
+            "    t.payment_method_id, pm.payment_method_name, ca.car_id, ca.car_code, b.bus_company_id\n" + //
+            "ORDER BY\n" + //
+            "    t.transaction_id;", nativeQuery = true)
     List<Object[]> findTransactionsByBusCompanyId(@Param("busCompanyId") int busCompanyId);
 
 }

@@ -159,7 +159,8 @@ public class TransactionService {
         transaction.setTransaction_timeEdit(nowTimestamp);
         return transactionRepo.save(transaction);
     }
-// view information customer
+
+    // view information customer
     public List<OderDTO> getTransactionsByBusCompanyId(int busCompanyId) {
         List<Object[]> results = transactionRepo.findTransactionsByBusCompanyId(busCompanyId);
         List<OderDTO> transactions = new ArrayList<>();
@@ -185,7 +186,8 @@ public class TransactionService {
 
         return transactions;
     }
-//cancel
+
+    // cancel
     public Transaction confirmCancelOrder(OderDTO cancelOrder) {
         Transaction transaction = transactionRepo.getReferenceById(cancelOrder.getTransactionId());
         String[] ticketId = cancelOrder.getTicketId().split(",");

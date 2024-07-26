@@ -71,18 +71,18 @@ public class RouteService {
         try {
             Route route = routeRepo.findById(route_id)
                     .orElseThrow(() -> new RuntimeException("Route not found with id " + route_id));
-
+    
             Car car = carRepo.getReferenceById(updatedRoute.getCar_id());
-
             Location startLocation = locationRepo.getReferenceById(updatedRoute.getStartLocation_id());
             Location endLocation = locationRepo.getReferenceById(updatedRoute.getEndLocation_id());
             Driver driver = driverRepo.getReferenceById(updatedRoute.getDriver_id());
             BusCompany busCompany = busCompanyRepo.getReferenceById(updatedRoute.getBusCompany_id());
-
+    
+            System.out.println("Updating route with ID: " + route_id);
             if (isCarOrDriverBooked(car, driver, updatedRoute.getRoute_startTime(), updatedRoute.getRoute_endTime())) {
                 throw new RuntimeException("Car or Driver is already booked on the selected day.");
             }
-
+    
             route.setCar(car);
             route.setDriver(driver);
             route.setStartLocation(startLocation);
@@ -92,6 +92,7 @@ public class RouteService {
             route.setPolicy(updatedRoute.getPolicy());
             route.setRoute_description(updatedRoute.getRoute_description());
             route.setBusCompany(busCompany);
+    
             List<Ticket> tickets = new ArrayList<>();
             int totalSeats = car.getAmount_seat();
             for (int i = 0; i < 2; i++) {
@@ -104,14 +105,14 @@ public class RouteService {
                 }
             }
             ticketRepo.saveAll(tickets);
-
+    
             return routeRepo.save(route);
         } catch (Exception e) {
             System.out.println(e);
         }
         return null;
     }
-
+    
     public void save(RouteDTO newRoute) {
         System.out.println(newRoute.toString());
         Car car = carRepo.getReferenceById(newRoute.getCar_id());
@@ -120,11 +121,12 @@ public class RouteService {
         Location endLocation = locationRepo.getReferenceById(newRoute.getEndLocation_id());
         Driver driver = driverRepo.getReferenceById(newRoute.getDriver_id());
         int amountSeat = car.getAmount_seat();
-
+    
+        System.out.println("Saving new route");
         if (isCarOrDriverBooked(car, driver, newRoute.getRoute_startTime(), newRoute.getRoute_endTime())) {
             throw new RuntimeException("Car or Driver is already booked on the selected day.");
         }
-
+    
         Route route = new Route(0, newRoute.getRoute_startTime(), newRoute.getRoute_endTime(), newRoute.getPolicy(),
                 newRoute.getRoute_description(), newRoute.isDaily(), busCompany, starLocation, endLocation, car, driver,
                 null);
@@ -138,6 +140,7 @@ public class RouteService {
             }
         }
     }
+    
 
     @Scheduled(cron = "0 21 09 * * ?")
     @Transactional

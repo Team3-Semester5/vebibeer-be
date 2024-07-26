@@ -33,7 +33,11 @@ public class Ticket {
     private String ticket_seat;
     private String ticket_status;
 
+   
+
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "route_id", referencedColumnName = "route_id")
     private Route route;
+
+    
 }

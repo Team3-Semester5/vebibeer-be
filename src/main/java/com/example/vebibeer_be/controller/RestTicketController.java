@@ -6,14 +6,9 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import com.example.vebibeer_be.exception.TicketAlreadyBookedException;
 import com.example.vebibeer_be.model.entities.BusCompany.Ticket;
 import com.example.vebibeer_be.model.service.BusCompanyService.TicketService;
 
@@ -82,4 +77,31 @@ public class RestTicketController {
         return new ResponseEntity<>(highestPrice, HttpStatus.OK);
     }
 
+    @PostMapping("/lock")
+    public ResponseEntity<String> lockSeat(@RequestParam String ticketSeat, @RequestParam String customerName) {
+        try {
+            boolean lockSuccess = ticketService.lockSeat(ticketSeat, customerName);
+            if (lockSuccess) {
+                return new ResponseEntity<>("Seat locked successfully", HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>("Seat is already locked by another customer", HttpStatus.CONFLICT);
+            }
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>("Failed to lock seat. Please try again.", HttpStatus.CONFLICT);
+        }
+    }
+
+    @PostMapping("/book")
+    public ResponseEntity<String> bookTicket(@RequestParam String ticketSeat, @RequestParam String customerName) {
+        try {
+            ticketService.bookTicket(ticketSeat, customerName);
+            return new ResponseEntity<>("Ticket booked successfully", HttpStatus.OK);
+        } catch (TicketAlreadyBookedException e) {
+            return new ResponseEntity<>("Ticket is already booked", HttpStatus.CONFLICT);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(
+                    "Failed to book ticket due to concurrent booking attempt or timeout. Please try again.",
+                    HttpStatus.CONFLICT);
+        }
+    }
 }
