@@ -11,4 +11,5 @@ import com.example.vebibeer_be.model.entities.BusCompany.Car;
 public interface CarRepo extends JpaRepository<Car, Integer> {
     @Query("SELECT c FROM Car c WHERE c.busCompany.busCompany_id = :busCompanyId")
     List<Car> findByBusCompanyId(int busCompanyId);
+
 }

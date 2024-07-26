@@ -14,10 +14,14 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString
 public class RatingDTO {
+    private int rating_id;
     private String rating_content;
     private Timestamp rating_editTime;
     private int amount_star;
     private String username;
     private int busCompany_id;
-   
+
+    private String carCode;
+    private String driverName;
+    private String customerFullname;
 }

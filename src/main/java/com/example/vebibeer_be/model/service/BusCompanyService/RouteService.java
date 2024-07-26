@@ -78,6 +78,11 @@ public class RouteService {
             Location endLocation = locationRepo.getReferenceById(updatedRoute.getEndLocation_id());
             Driver driver = driverRepo.getReferenceById(updatedRoute.getDriver_id());
             BusCompany busCompany = busCompanyRepo.getReferenceById(updatedRoute.getBusCompany_id());
+
+            if (isCarOrDriverBooked(car, driver, updatedRoute.getRoute_startTime(), updatedRoute.getRoute_endTime())) {
+                throw new RuntimeException("Car or Driver is already booked on the selected day.");
+            }
+
             route.setCar(car);
             route.setDriver(driver);
             route.setStartLocation(startLocation);
@@ -115,6 +120,11 @@ public class RouteService {
         Location endLocation = locationRepo.getReferenceById(newRoute.getEndLocation_id());
         Driver driver = driverRepo.getReferenceById(newRoute.getDriver_id());
         int amountSeat = car.getAmount_seat();
+
+        if (isCarOrDriverBooked(car, driver, newRoute.getRoute_startTime(), newRoute.getRoute_endTime())) {
+            throw new RuntimeException("Car or Driver is already booked on the selected day.");
+        }
+
         Route route = new Route(0, newRoute.getRoute_startTime(), newRoute.getRoute_endTime(), newRoute.getPolicy(),
                 newRoute.getRoute_description(), newRoute.isDaily(), busCompany, starLocation, endLocation, car, driver,
                 null);
@@ -142,7 +152,9 @@ public class RouteService {
                         route.getRoute_description(), route.isDaily(), route.getBusCompany(), route.getStartLocation(),
                         route.getEndLocation(), route.getCar(),
                         route.getDriver(), null);
-
+                if (isCarOrDriverBooked(route.getCar(), route.getDriver(), startTime, endTime)) {
+                    continue;
+                }
                 Route addRoute = routeRepo.save(newRoute);
                 route.setDaily(false);
                 routeRepo.save(route);
@@ -158,4 +170,24 @@ public class RouteService {
             }
         }
     }
+
+    private boolean isCarOrDriverBooked(Car car, Driver driver, Timestamp startTime, Timestamp endTime) {
+        List<Route> bookedRoutes = routeRepo.findAll();
+        for (Route route : bookedRoutes) {
+            if (route.getCar().equals(car)
+                    && isOverlapping(route.getRoute_startTime(), route.getRoute_endTime(), startTime, endTime)) {
+                return true;
+            }
+            if (route.getDriver().equals(driver)
+                    && isOverlapping(route.getRoute_startTime(), route.getRoute_endTime(), startTime, endTime)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean isOverlapping(Timestamp start1, Timestamp end1, Timestamp start2, Timestamp end2) {
+        return (start1.before(end2) && start2.before(end1));
+    }
+
 }

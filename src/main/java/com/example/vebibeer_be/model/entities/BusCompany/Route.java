@@ -28,7 +28,7 @@ import lombok.ToString;
 @ToString
 @Entity
 @Table(name = "route")
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 public class Route {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,7 +39,7 @@ public class Route {
     private String policy;
     private String route_description;
     private boolean isDaily;
-    
+
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "busCompany_id", referencedColumnName = "busCompany_id")
     private BusCompany busCompany;
@@ -61,9 +61,7 @@ public class Route {
     private Driver driver;
 
     @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "service_route", joinColumns =  @JoinColumn(name = "route_id"), inverseJoinColumns = @JoinColumn(name = "service_id"))
+    @JoinTable(name = "service_route", joinColumns = @JoinColumn(name = "route_id"), inverseJoinColumns = @JoinColumn(name = "service_id"))
     private Set<Service> services;
-
- 
 
 }
