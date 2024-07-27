@@ -132,7 +132,7 @@ public class RouteService {
                 null);
         Route addRoute = routeRepo.save(route);
         for (int i = 0; i < 2; i++) {
-            for (int j = 0; j < amountSeat / 2; j++) {
+            for (int j = 0; j < amountSeat / 2; j++) {      
                 String ticketSeat = i == 0 ? "A" : "B";
                 ticketSeat += j;
                 int price = newRoute.getPriceTicket();
@@ -142,7 +142,7 @@ public class RouteService {
     }
     
 
-    @Scheduled(cron = "0 21 09 * * ?")
+    @Scheduled(cron = "0 50 23 * * ?")
     @Transactional
     public void createRouteDaily() {
         List<Route> routes = routeRepo.findAll();
@@ -155,9 +155,9 @@ public class RouteService {
                         route.getRoute_description(), route.isDaily(), route.getBusCompany(), route.getStartLocation(),
                         route.getEndLocation(), route.getCar(),
                         route.getDriver(), null);
-                if (isCarOrDriverBooked(route.getCar(), route.getDriver(), startTime, endTime)) {
-                    continue;
-                }
+                // if (isCarOrDriverBooked(route.getCar(), route.getDriver(), startTime, endTime)) {
+                //     continue;
+                // }
                 Route addRoute = routeRepo.save(newRoute);
                 route.setDaily(false);
                 routeRepo.save(route);
@@ -190,7 +190,7 @@ public class RouteService {
     }
 
     private boolean isOverlapping(Timestamp start1, Timestamp end1, Timestamp start2, Timestamp end2) {
-        return (start1.before(end2) && start2.before(end1));
+        return (start1.before(end2) && start2.after(end1));
     }
 
 }

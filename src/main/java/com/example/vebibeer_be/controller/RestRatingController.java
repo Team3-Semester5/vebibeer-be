@@ -60,7 +60,8 @@ public class RestRatingController {
         try {
             // Thiết lập các thuộc tính cần thiết cho đối tượng Rating
             BusCompany busCompany = busCompanyService.getById(newRating.getBusCompany_id());
-            Rating rating = new Rating(0, newRating.getAmount_star(), newRating.getRating_content(), newRating.getRating_editTime(), customer, busCompany);
+            Rating rating = new Rating(0, newRating.getAmount_star(), newRating.getRating_content(),
+                    newRating.getRating_editTime(), customer, busCompany);
             ratingService.save(rating);
 
             response.put("message", "Rating saved successfully");
@@ -114,4 +115,13 @@ public class RestRatingController {
         }
     }
 
+    @GetMapping("/busCompany/{busCompanyId}")
+    public ResponseEntity<List<RatingDTO>> getRatingsByBusCompany(
+            @PathVariable(name = "busCompanyId") int busCompanyId) {
+        List<RatingDTO> ratings = ratingService.getRatingsByBusCompany(busCompanyId);
+        if (ratings.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(ratings, HttpStatus.OK);
+    }
 }

@@ -2,6 +2,7 @@ package com.example.vebibeer_be.controller;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -138,11 +139,20 @@ public class RestCustomerController {
         existingCustomer.setCustomer_gender(updatedCustomer.getCustomer_gender());
         existingCustomer.setCustomer_nationality(updatedCustomer.getCustomer_nationality());
         existingCustomer.setCustomer_dob(updatedCustomer.getCustomer_dob());
+        existingCustomer.setPoint(updatedCustomer.getPoint());
     
         customerService.saveCustomerWithoutChangePass(existingCustomer);
     
         return new ResponseEntity<>(existingCustomer, HttpStatus.OK);
     }
+    @GetMapping("/get-cus")
+    public ResponseEntity<Customer> getCustomerByUsername(@RequestParam("username") String username) {
+    Optional<Customer> customer = customerService.findByUsername(username);
+    if (customer.isPresent()) {
+        return new ResponseEntity<>(customer.get(), HttpStatus.OK);
+    } else {
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
 
-
+}
 }

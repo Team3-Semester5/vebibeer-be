@@ -15,26 +15,26 @@ public class WebSocketController {
     @Autowired
     private TicketService ticketService;
 
-    @MessageMapping("/lockSeat")
-    @SendTo("/topic/seatStatus")
-    public TicketDTO lockSeat(TicketLockRequest request) throws Exception {
-        boolean lockSuccess = ticketService.lockSeat(request.getTicketSeat(), request.getCustomerName());
-        TicketDTO ticket = ticketService.getTicketBySeat(request.getTicketSeat());
-        ticket.setLockSuccess(lockSuccess);
-        return ticket;
-    }
+    // @MessageMapping("/lockSeat")
+    // @SendTo("/topic/seatStatus")
+    // public TicketDTO lockSeat(TicketLockRequest request) throws Exception {
+    //     boolean lockSuccess = ticketService.lockSeat(request.getTicketSeat(), request.getCustomerName());
+    //     TicketDTO ticket = ticketService.getTicketBySeat(request.getTicketSeat());
+    //     ticket.setLockSuccess(lockSuccess);
+    //     return ticket;
+    // }
 
-    @MessageMapping("/bookSeat")
-    @SendTo("/topic/seatStatus")
-    public TicketDTO bookSeat(TicketLockRequest request) throws Exception {
-        ticketService.bookTicket(request.getTicketSeat(), request.getCustomerName());
-        return ticketService.getTicketBySeat(request.getTicketSeat());
-    }
+    // @MessageMapping("/bookSeat")
+    // @SendTo("/topic/seatStatus")
+    // public TicketDTO bookSeat(TicketLockRequest request) throws Exception {
+    //     ticketService.bookTicket(request.getTicketSeat(), request.getCustomerName());
+    //     return ticketService.getTicketBySeat(request.getTicketSeat());
+    // }
 
-    @MessageMapping("/unlockSeat")
-    @SendTo("/topic/seatStatus")
-    public TicketDTO unlockSeat(TicketLockRequest request) throws Exception {
-        ticketService.unlockSeat(request.getTicketSeat());
-        return ticketService.getTicketBySeat(request.getTicketSeat());
-    }
+    // @MessageMapping("/unlockSeat")
+    // @SendTo("/topic/seatStatus")
+    // public TicketDTO unlockSeat(TicketLockRequest request) throws Exception {
+    //     ticketService.unlockSeat(request.getTicketSeat());
+    //     return ticketService.getTicketBySeat(request.getTicketSeat());
+    // }
 }

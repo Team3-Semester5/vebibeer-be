@@ -52,19 +52,20 @@ public class TicketService {
     }
 
     @Transactional
-    public synchronized boolean lockSeat(String ticketSeat, String customerName) {
+    public synchronized boolean lockSeat(String ticketSeat, int routeId, String customerName) {
+        String seatKey = ticketSeat + ":" + routeId;
         long currentTime = System.currentTimeMillis();
-        if (seatLocks.containsKey(ticketSeat)) {
+        if (seatLocks.containsKey(seatKey)) {
             return false;
         }
-        seatLocks.put(ticketSeat, currentTime);
+        seatLocks.put(seatKey, currentTime);
 
-        // Simulate unlocking after 5 minutes
+        // Simulate unlocking after 2 minutes
         new Thread(() -> {
             try {
-                Thread.sleep(300000); // 5 minutes
-                if (seatLocks.get(ticketSeat) == currentTime) {
-                    seatLocks.remove(ticketSeat);
+                Thread.sleep(20000); // 2 minutes
+                if (seatLocks.get(seatKey) == currentTime) {
+                    seatLocks.remove(seatKey);
                 }
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -74,35 +75,39 @@ public class TicketService {
     }
 
     @Transactional
-    public void bookTicket(String ticketSeat, String customerName) {
-        Long lockTime = seatLocks.get(ticketSeat);
-        if (lockTime == null || System.currentTimeMillis() - lockTime > 300000) {
+    public void bookTicket(String ticketSeat, int routeId, String customerName) {
+        String seatKey = ticketSeat + ":" + routeId;
+        Long lockTime = seatLocks.get(seatKey);
+        if (lockTime == null || System.currentTimeMillis() - lockTime > 20000) {
             throw new RuntimeException("Seat not locked or lock expired");
         }
 
         try {
-            Ticket ticket = ticketRepo.findBySeatForUpdate(ticketSeat).orElseThrow(() -> new RuntimeException("Ticket not found"));
+            Ticket ticket = ticketRepo.findBySeatForUpdate(ticketSeat, routeId)
+                    .orElseThrow(() -> new RuntimeException("Ticket not found"));
             if ("Empty".equals(ticket.getTicket_status())) {
-                ticket.setTicket_status("Booked");
-                seatLocks.remove(ticketSeat);
+                ticket.setTicket_status("Purchased");
+                seatLocks.remove(seatKey);
                 ticketRepo.save(ticket);
             } else {
                 throw new TicketAlreadyBookedException("Ticket is already booked");
             }
         } catch (Exception e) {
-            throw new RuntimeException("Failed to book ticket due to concurrent booking attempt or timeout. Please try again.", e);
+            throw new RuntimeException(
+                    "Failed to book ticket due to concurrent booking attempt or timeout. Please try again.", e);
         }
     }
 
     @Transactional
-    public synchronized void unlockSeat(String ticketSeat) {
-        seatLocks.remove(ticketSeat);
+    public synchronized void unlockSeat(String ticketSeat, int routeId) {
+        String seatKey = ticketSeat + ":" + routeId;
+        seatLocks.remove(seatKey);
     }
-    
-    public TicketDTO getTicketBySeat(String ticketSeat) {
-        return ticketRepo.findBySeat(ticketSeat)
-                         .map(this::convertToDTO)
-                         .orElseThrow(() -> new RuntimeException("Ticket not found"));
+
+    public TicketDTO getTicketBySeat(String ticketSeat, int routeId) {
+        return ticketRepo.findBySeat(ticketSeat, routeId)
+                .map(this::convertToDTO)
+                .orElseThrow(() -> new RuntimeException("Ticket not found"));
     }
 
     private TicketDTO convertToDTO(Ticket ticket) {
@@ -114,5 +119,4 @@ public class TicketService {
         dto.setRoute(ticket.getRoute());
         return dto;
     }
-    
 }

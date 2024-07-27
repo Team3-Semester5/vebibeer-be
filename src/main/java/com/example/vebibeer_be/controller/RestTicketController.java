@@ -78,9 +78,9 @@ public class RestTicketController {
     }
 
     @PostMapping("/lock")
-    public ResponseEntity<String> lockSeat(@RequestParam String ticketSeat, @RequestParam String customerName) {
+    public ResponseEntity<String> lockSeat(@RequestParam String ticketSeat, @RequestParam int routeId, @RequestParam String customerName) {
         try {
-            boolean lockSuccess = ticketService.lockSeat(ticketSeat, customerName);
+            boolean lockSuccess = ticketService.lockSeat(ticketSeat, routeId, customerName);
             if (lockSuccess) {
                 return new ResponseEntity<>("Seat locked successfully", HttpStatus.OK);
             } else {
@@ -92,9 +92,9 @@ public class RestTicketController {
     }
 
     @PostMapping("/book")
-    public ResponseEntity<String> bookTicket(@RequestParam String ticketSeat, @RequestParam String customerName) {
+    public ResponseEntity<String> bookTicket(@RequestParam String ticketSeat, @RequestParam int routeId, @RequestParam String customerName) {
         try {
-            ticketService.bookTicket(ticketSeat, customerName);
+            ticketService.bookTicket(ticketSeat, routeId, customerName);
             return new ResponseEntity<>("Ticket booked successfully", HttpStatus.OK);
         } catch (TicketAlreadyBookedException e) {
             return new ResponseEntity<>("Ticket is already booked", HttpStatus.CONFLICT);
@@ -103,5 +103,11 @@ public class RestTicketController {
                     "Failed to book ticket due to concurrent booking attempt or timeout. Please try again.",
                     HttpStatus.CONFLICT);
         }
+    }
+
+    @PostMapping("/unlock")
+    public ResponseEntity<String> unlockSeat(@RequestParam String ticketSeat, @RequestParam int routeId) {
+        ticketService.unlockSeat(ticketSeat, routeId);
+        return new ResponseEntity<>("Seat unlocked successfully", HttpStatus.OK);
     }
 }

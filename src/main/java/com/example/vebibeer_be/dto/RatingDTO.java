@@ -25,3 +25,4 @@ public class RatingDTO {
     private String driverName;
     private String customerFullname;
 }
+
