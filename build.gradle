@@ -46,6 +46,14 @@ dependencies {
 	// file upload
 	implementation 'org.apache.commons:commons-fileupload2:2.0.0-M2'
 	implementation 'commons-fileupload:commons-fileupload:1.4'
+
+	// Other dependencies
+	//Linh
+    // Spring WebSocket
+    implementation 'org.springframework.boot:spring-boot-starter-websocket'
+
+    // Spring Messaging
+    implementation 'org.springframework:spring-messaging'
 }
 
 tasks.named('test') {
