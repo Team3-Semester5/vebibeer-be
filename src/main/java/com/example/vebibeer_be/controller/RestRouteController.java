@@ -38,11 +38,12 @@ public class RestRouteController {
         return new ResponseEntity<>(routes, HttpStatus.OK);
     }
 
-    @PostMapping(value = { "/buscomapany/save", "/buscomapany/save/" })
+    @PostMapping(value = { "/buscompany/save", "/buscompany/save/" })
     public ResponseEntity<?> save(@RequestBody RouteDTO newRoute) {
         routeService.save(newRoute);
         return ResponseEntity.ok(newRoute);
     }
+    
 
     @GetMapping(value = { "/buscompany/{id}", "/buscompany/{id}/" })
     public ResponseEntity<Route> getById(@PathVariable(name = "id") int route_id) {
