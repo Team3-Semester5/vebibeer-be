@@ -159,8 +159,7 @@ public class TransactionService {
         transaction.setTransaction_timeEdit(nowTimestamp);
         return transactionRepo.save(transaction);
     }
-
-    // view information customer
+// view information customer
     public List<OderDTO> getTransactionsByBusCompanyId(int busCompanyId) {
         List<Object[]> results = transactionRepo.findTransactionsByBusCompanyId(busCompanyId);
         List<OderDTO> transactions = new ArrayList<>();
@@ -186,8 +185,7 @@ public class TransactionService {
 
         return transactions;
     }
-
-    // cancel
+//cancel
     public Transaction confirmCancelOrder(OderDTO cancelOrder) {
         Transaction transaction = transactionRepo.getReferenceById(cancelOrder.getTransactionId());
         String[] ticketId = cancelOrder.getTicketId().split(",");
@@ -197,9 +195,8 @@ public class TransactionService {
             LocalDateTime timeNow = LocalDateTime.now();
             LocalDateTime timeStart = ticket.getRoute().getRoute_startTime().toLocalDateTime();
 
-            // long totalRefund = customer.getPoint()
-            //         + (long) (ticket.getTicket_price() * calculateRefund(timeNow, timeStart));
             long totalRefund = customer.getPoint() + (long) ticket.getTicket_price();
+                    // + (long) (ticket.getTicket_price() * calculateRefund(timeNow, timeStart));
             System.out.println(totalRefund);
             customer.setPoint(totalRefund);
             customerRepo.save(customer);
@@ -212,7 +209,6 @@ public class TransactionService {
                 System.out.println(e);
             }
         }
-
         return transactionRepo.save(transaction);
     }
 

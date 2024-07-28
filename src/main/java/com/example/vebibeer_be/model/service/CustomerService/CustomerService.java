@@ -95,9 +95,11 @@ public class CustomerService {
     public Optional<Customer> findByUsername(String username) {
         return customerRepo.findByUsername(username);
     }
-    public void saveCustomerWithoutChangePass(Customer customer){
+
+    public void saveCustomerWithoutChangePass(Customer customer) {
         customerRepo.save(customer);
     }
+
     @Autowired
     JavaMailSender mailSender;
 
@@ -159,4 +161,7 @@ public class CustomerService {
 
     }
 
+    public void saveCuspoint(Customer customer) {
+        customerRepo.save(customer);
+    }
 }

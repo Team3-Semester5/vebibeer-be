@@ -32,7 +32,7 @@ public class RestCustomerController {
     @Autowired
     CloudinaryService cloudinaryService;
 
-    @GetMapping(value = {"", "/"})
+    @GetMapping(value = { "", "/" })
     public ResponseEntity<List<Customer>> showList() {
         List<Customer> customerList = customerService.getAllCustomer();
         if (customerList.isEmpty()) {
@@ -50,7 +50,7 @@ public class RestCustomerController {
         return ResponseEntity.ok(customer);
     }
 
-    @GetMapping(value = {"/delete/{id}/", "/delete/{id}"})
+    @GetMapping(value = { "/delete/{id}/", "/delete/{id}" })
     public ResponseEntity<Customer> deleteCustomer(@PathVariable(name = "id") int customer_id) {
         Customer customer = customerService.getCustomerById(customer_id);
         if (customer == null) {
@@ -60,7 +60,7 @@ public class RestCustomerController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PostMapping(value = {"/save", "/save/"})
+    @PostMapping(value = { "/save", "/save/" })
     public ResponseEntity<Customer> saveCustomer(@RequestBody Customer customer) {
         customerService.saveCustomer(customer);
         return new ResponseEntity<>(HttpStatus.CREATED);
@@ -86,7 +86,7 @@ public class RestCustomerController {
             customerService.saveCustomer(customer);
 
             return new ResponseEntity<>(customer, HttpStatus.OK);
-            
+
         } catch (IOException e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -96,63 +96,80 @@ public class RestCustomerController {
     private PasswordEncoder passwordEncoder;
 
     @PostMapping("/changePassword/{id}")
-    public ResponseEntity<String> changePassword(@PathVariable("id") int customerId, @RequestBody PasswordChangeDTO passwordChangeDTO) {
+    public ResponseEntity<String> changePassword(@PathVariable("id") int customerId,
+            @RequestBody PasswordChangeDTO passwordChangeDTO) {
         // Log the received payload for debugging
         System.out.println("Received change password request for customer ID: " + customerId);
         System.out.println("Old Password: " + passwordChangeDTO.getOldPassword());
         System.out.println("New Password: " + passwordChangeDTO.getNewPassword());
         System.out.println("Confirm Password: " + passwordChangeDTO.getConfirmPassword());
-    
-        if (passwordChangeDTO.getOldPassword() == null || 
-            passwordChangeDTO.getNewPassword() == null || 
-            passwordChangeDTO.getConfirmPassword() == null) {
+
+        if (passwordChangeDTO.getOldPassword() == null ||
+                passwordChangeDTO.getNewPassword() == null ||
+                passwordChangeDTO.getConfirmPassword() == null) {
             return new ResponseEntity<>("Missing required fields", HttpStatus.BAD_REQUEST);
         }
-    
+
         Customer existingCustomer = customerService.getCustomerById(customerId);
         if (existingCustomer == null) {
             return new ResponseEntity<>("Customer not found", HttpStatus.NOT_FOUND);
         }
-    
+
         if (!passwordChangeDTO.getNewPassword().equals(passwordChangeDTO.getConfirmPassword())) {
             return new ResponseEntity<>("New password and confirm password do not match", HttpStatus.BAD_REQUEST);
         }
-      
+
         if (!passwordEncoder.matches(passwordChangeDTO.getOldPassword(), existingCustomer.getPassword())) {
             return new ResponseEntity<>("Old password is incorrect", HttpStatus.UNAUTHORIZED);
         }
-    
+
         existingCustomer.setPassword(passwordChangeDTO.getNewPassword());
         customerService.saveCustomer(existingCustomer);
-    
+
         return new ResponseEntity<>("Password changed successfully", HttpStatus.OK);
     }
 
     @PostMapping("/updateProfile/{id}")
-    public ResponseEntity<Customer> updateProfile(@PathVariable("id") int customerId, @RequestBody Customer updatedCustomer) {
+    public ResponseEntity<Customer> updateProfile(@PathVariable("id") int customerId,
+            @RequestBody Customer updatedCustomer) {
         Customer existingCustomer = customerService.getCustomerById(customerId);
         if (existingCustomer == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-    
+
         existingCustomer.setCustomer_fullname(updatedCustomer.getCustomer_fullname());
         existingCustomer.setCustomer_gender(updatedCustomer.getCustomer_gender());
         existingCustomer.setCustomer_nationality(updatedCustomer.getCustomer_nationality());
         existingCustomer.setCustomer_dob(updatedCustomer.getCustomer_dob());
-        existingCustomer.setPoint(updatedCustomer.getPoint());
-    
+      
+
         customerService.saveCustomerWithoutChangePass(existingCustomer);
-    
+
         return new ResponseEntity<>(existingCustomer, HttpStatus.OK);
     }
+
     @GetMapping("/get-cus")
     public ResponseEntity<Customer> getCustomerByUsername(@RequestParam("username") String username) {
-    Optional<Customer> customer = customerService.findByUsername(username);
-    if (customer.isPresent()) {
-        return new ResponseEntity<>(customer.get(), HttpStatus.OK);
-    } else {
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        Optional<Customer> customer = customerService.findByUsername(username);
+        if (customer.isPresent()) {
+            return new ResponseEntity<>(customer.get(), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
     }
 
-}
+    @PostMapping("/updateProfile-point/{id}")
+    public ResponseEntity<Customer> updateProfilePoint(@PathVariable("id") int customerId,
+            @RequestBody Customer updatedCustomer) {
+        Customer existingCustomer = customerService.getCustomerById(customerId);
+        if (existingCustomer == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        existingCustomer.setPoint(updatedCustomer.getPoint());
+
+        customerService.saveCuspoint(existingCustomer);
+
+        return new ResponseEntity<>(existingCustomer, HttpStatus.OK);
+    }
 }
